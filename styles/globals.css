@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: 'THEmpgtR', sans-serif;
+}
+
+@font-face {
+    font-family: 'THEmpgtB';
+    src: url('/public/fonts/THEmpgtB_U.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'THEmpgtR';
+    src: url('/public/fonts/THEmpgtR.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'THEmpgtM';
+    src: url('/public/fonts/THEmpgtM_U.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
