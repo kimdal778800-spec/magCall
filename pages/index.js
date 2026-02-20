@@ -1,18 +1,15 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useAnimationControls } from "framer-motion";
 import PartnersSection from "@/components/PartnersSection";
 import TotalPayBack from "@/components/TotalPayBack";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthContext";
+import  useCryptoPrices from "@/components/hooks/useCryptoPrices";
+import CryptoTicker from "@/components/CryptoTicker";
 
-/** 배너에 노출할 이미지 & 링크 (DB 연동 시 이 배열만 교체) */
-const logos = [
-    { src: "/images/1.png", link: "/shortform/1" },
-    { src: "/images/2.png", link: "/shortform/2" },
-    { src: "/images/3.png", link: "/shortform/3" },
-    { src: "/images/4.png", link: "/shortform/4" },
-    { src: "/images/5.png", link: "/shortform/5" },
-    { src: "/images/6.png", link: "/shortform/5" },
-];
 
 /** 아이템: 정사각형 + 테두리 + hover wiggle */
 function LogoItem({ logo }) {
@@ -32,6 +29,7 @@ function LogoItem({ logo }) {
     return (
         <MotionLink
             href={logo.link || "#"}
+            target="_blank" // 새 창으로 열기
             className="block shrink-0 transition-all duration-500 group-hover:opacity-40 hover:!opacity-100"
             onHoverStart={() => controls.start(wiggle())}
             onHoverEnd={() =>
@@ -106,55 +104,111 @@ export default function Home() {
         "/images/20251010_231600.png",
         "/images/20251010_231518.png",
     ]);
+    const router = useRouter();
+    const { user } = useAuth();
+    const [logos, setLogos] = useState([]);
+    // ✅ 모바일 감지
+    const [isMobile, setIsMobile] = useState(false);
+    const { prices, flash, getFlashClass, getChangeColor, USD_RATE } = useCryptoPrices();
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile(); // 최초 실행
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    /** ✅ DB의 links 테이블에서 로고 데이터 불러오기 */
+    useEffect(() => {
+        const fetchLogos = async () => {
+            try {
+                const res = await fetch("/api/admin/linksList", { method: "GET" });
+                const data = await res.json();
+
+                if (data.links && Array.isArray(data.links)) {
+                    const mapped = data.links.map((item) => ({
+                        src: item.image, // DB의 image → src
+                        link: item.url,  // DB의 url → link
+                    }));
+                    setLogos(mapped);
+                }
+            } catch (err) {
+                console.error("🚫 로고 데이터 불러오기 오류:", err);
+            }
+        };
+
+        fetchLogos();
+    }, []);
+
+    const handleApplyClick = () => {
+        if (!user) {
+            router.push("/login"); // 로그인되지 않으면 로그인 페이지로 이동
+        } else {
+            router.push("/apply"); // 로그인되었으면 신청 페이지로 이동
+        }
+    };
 
     return (
         <div className="bg-blue-50 min-h-screen text-gray-800 font-sans overflow-hidden">
-            {/* Hero Section */}
-            <section className="h-[60vh] md:h-[50vh] flex flex-col items-center justify-center relative">
-                <div className="max-w-7xl mx-auto w-full px-6 flex flex-col md:flex-row items-center justify-between gap-10">
-                    {/* Left Text */}
-                    <div className="md:w-1/2 text-center md:text-left">
-                        <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-snug text-gray-900">
-                            정직하고 안전한 곳에서
-                            <br />
-                            <span className="text-blue-700">페이백 받으세요</span>
-                        </h1>
-                        <p className="text-gray-700 mb-8 text-base md:text-lg leading-relaxed">
-                            잃어버린 거래수수료 환급 받기, 신청 버튼 한 번이면 됩니다!
-                        </p>
-                        <button className="bg-blue-600 text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-blue-700 transition">
-                            신청하기
-                        </button>
-                    </div>
+            {/* ✅ 모바일일 때만 헤더 높이만큼 패딩 적용 */}
+            <div className={isMobile ? "pt-[72px]" : ""}>
+                <section className="min-h-[70vh] md:h-[50vh] flex flex-col items-center justify-center relative overflow-visible">
+                    {/* ✅ 텍스트 + 이미지 영역 */}
+                    <div className="max-w-7xl mx-auto w-full px-6 flex flex-col md:flex-row items-center justify-between gap-10 z-10">
+                        {/* Left Text */}
+                        <div className="w-full md:w-1/2 text-center md:text-left relative z-10 bg-blue-50/90 p-4 rounded-lg md:bg-transparent md:p-0">
+                            <CryptoTicker
+                                prices={prices}
+                                flash={flash}
+                                getFlashClass={getFlashClass}
+                                getChangeColor={getChangeColor}
+                                USD_RATE={USD_RATE}
+                            />
 
-                    {/* Right Image */}
-                    <div className="md:w-1/2 flex justify-center md:justify-end">
-                        <div className="relative">
-                            <img
-                                src={images[0]}
-                                alt="배경"
-                                className="rounded-xl shadow-md w-[400px] md:w-[480px] object-cover"
-                            />
-                            <img
-                                src={images[1]}
-                                alt="웹사이트 예시"
-                                className="absolute -bottom-6 -left-6 w-[300px] md:w-[360px] rounded-lg shadow-lg border border-gray-200"
-                            />
+                            <p
+                                className="
+                                    mt-9
+                                    font-extrabold
+                                    text-[clamp(2rem,3vw,1.6rem)]
+                                    leading-snug
+                                    bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500
+                                    bg-clip-text text-transparent animate-gradientMove
+                                  "
+                            >
+                                정직하고 안전하게 <br className="block md:hidden" />
+                                페이백 받으세요
+                            </p>
+                        </div>
+
+                        {/* Right Image */}
+                        <div className="md:w-1/2 flex justify-center md:justify-end mt-8 md:mt-0">
+                            <div className="relative">
+                                <img
+                                    src={images[0]}
+                                    alt="배경"
+                                    className="rounded-xl shadow-md w-[320px] md:w-[480px] object-cover"
+                                />
+                                <img
+                                    src={images[1]}
+                                    alt="웹사이트 예시"
+                                    className="absolute -bottom-6 -left-6 w-[220px] md:w-[360px] rounded-lg shadow-lg border border-gray-200"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* 🔥 신청하기 아래: 무한 오른쪽 슬라이더 */}
-                <div className="mt-[60px] md:h-[0vh] w-full">
-                    <InfiniteRightSlider items={logos} duration={150} />
-                </div>
-            </section>
+                    {/* ✅ 아래쪽 무한 슬라이더 (중앙 정렬 유지) */}
+                    <div className="mt-[60px] w-full">
+                        <InfiniteRightSlider items={logos} duration={150} />
+                    </div>
+                </section>
 
-            {/* 예상 페이백 섹션 */}
-            <TotalPayBack />
 
-            {/* 제휴 거래소 섹션 */}
-            <PartnersSection />
+                {/* 예상 페이백 섹션 */}
+                <TotalPayBack />
+
+                {/* 제휴 거래소 섹션 */}
+                <PartnersSection />
+            </div>
         </div>
     );
 }

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://xn--3l2b13oekp.kr
+
+# Sitemaps
+Sitemap: https://xn--3l2b13oekp.kr/sitemap.xml

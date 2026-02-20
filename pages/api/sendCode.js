@@ -21,7 +21,16 @@ export default async function handler(req, res) {
             from: `"셀퍼럴닷컴" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: "📩 셀퍼럴 이메일 인증코드입니다.",
-            html: `<h2>인증코드: <strong style="color:#ff6b6b">${verificationCode}</strong></h2>`,
+            html:`
+                  <div style="font-family: Pretendard, Arial, sans-serif; line-height: 1.6;">
+                    <h2 style="color:#333;">📮 셀퍼럴 인증코드</h2>
+                    <p>아래 코드를 인증창에 입력해 주세요.</p>
+                    <div style="padding:12px 20px; background:#f8f9fa; border-radius:8px; display:inline-block; font-size:18px; letter-spacing:4px; font-weight:700; border:1px solid #ddd;">
+                      ${verificationCode}
+                    </div>
+                    <p style="margin-top:20px; font-size:13px; color:#666;">본 메일은 발신 전용입니다.</p>
+                  </div>
+                `,
         });
 
         // ✅ 인증코드 서버에 저장

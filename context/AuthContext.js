@@ -8,54 +8,47 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    // ✅ 로그인 상태 확인 함수
+    // ✅ 세션 상태 확인
     const checkSession = async () => {
         try {
-            const res = await fetch("/api/me");
+            const res = await fetch("/api/me", { credentials: "include" });
             const data = await res.json();
-
-            if (data.loggedIn) {
+            if (res.status === 200 && data.loggedIn) {
                 setUser(data.user);
             } else {
                 setUser(null);
             }
-        } catch (err) {
-            console.error("Session check failed:", err);
+        } catch {
             setUser(null);
         } finally {
             setLoading(false);
         }
     };
 
-    // ✅ 페이지 새로고침 or 첫 렌더링 시 세션 복원
     useEffect(() => {
         checkSession();
     }, []);
 
-    // ✅ 페이지 이동 시마다 세션 재검증 (로그인 유지 안정화)
+    // ✅ 페이지 이동마다 세션 재검증
     useEffect(() => {
         const handleRouteChange = async () => {
             await checkSession();
         };
-
         router.events.on("routeChangeComplete", handleRouteChange);
         return () => router.events.off("routeChangeComplete", handleRouteChange);
     }, [router]);
 
-    // ✅ 로그인 시: 즉시 Context 반영 (Header 즉시 갱신)
-    const login = (userData) => {
-        setUser(userData);
-    };
+    // ✅ 로그인
+    const login = (userData) => setUser(userData);
 
-    // ✅ 로그아웃 시: 서버 쿠키 삭제 + 상태 초기화 + 홈 리다이렉트
+    // ✅ 로그아웃
     const logout = async () => {
         try {
-            await fetch("/api/logout");
+            await fetch("/api/logout", { method: "GET", credentials: "include" });
+            setUser(null);
+            router.replace(router.asPath); // 새로고침 없이 상태 반영
         } catch (err) {
             console.error("Logout failed:", err);
-        } finally {
-            setUser(null);
-            router.push("/");
         }
     };
 
@@ -66,5 +59,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// ✅ 어디서든 useAuth()로 접근 가능
 export const useAuth = () => useContext(AuthContext);

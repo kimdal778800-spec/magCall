@@ -27,9 +27,13 @@ export default function Login() {
 
         const data = await res.json();
         if (res.ok) {
-            login({ email: data.user.email, name: data.user.name });
+            login({ email: data.user.email, name: data.user.name ,level: data.user.level });
             openModal("로그인 성공", `${data.user.name}님 환영합니다!`,"success");
-            setTimeout(() => router.push("/"), 1000);
+            // if (data.user.level >= 9) {
+            //     router.push("/admin/App");
+            // }else {
+                setTimeout(() => router.push("/"), 1000);
+            // }
         } else {
             openModal("로그인 실패", "이메일 또는 비밀번호를 확인해주세요.","error");
         }

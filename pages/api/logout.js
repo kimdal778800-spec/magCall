@@ -5,13 +5,14 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: "Method not allowed" });
 
     try {
-        // ✅ 쿠키 삭제 (만료 날짜를 과거로 설정)
         const cookie = serialize("token", "", {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            expires: new Date(0),
+            secure: false,
+            // secure: process.env.NODE_ENV === "production",
+
+            sameSite: "lax",
             path: "/",
+            maxAge: 0, // 즉시 만료
         });
 
         res.setHeader("Set-Cookie", cookie);

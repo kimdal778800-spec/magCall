@@ -1,28 +1,120 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: 'THEmpgtR', sans-serif;
-}
-
+/* 한 family 이름으로 통일 */
 @font-face {
-    font-family: 'THEmpgtB';
-    src: url('/public/fonts/THEmpgtB_U.otf') format('opentype');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'THEmpgtR';
-    src: url('/public/fonts/THEmpgtR.otf') format('opentype');
+    font-family: 'THEmpgt';
+    src: url('/fonts/THEmpgtR.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
 }
-
 @font-face {
-    font-family: 'THEmpgtM';
-    src: url('/public/fonts/THEmpgtM_U.otf') format('opentype');
+    font-family: 'THEmpgt';
+    src: url('/fonts/THEmpgtM_U.otf') format('opentype');
     font-weight: 500;
     font-style: normal;
 }
+@font-face {
+    font-family: 'THEmpgt';
+    src: url('/fonts/THEmpgtB_U.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'THEmpgt';
+    src: url('/fonts/THEmpgtEB_U.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+.unit-align {
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.unit-align small {
+    position: relative;
+    top: -1px;
+    margin-left: 2px;
+    font-size: 0.85em;
+}
+
+.ql-container {
+    font-size: 14px;
+    border: none !important;
+    background: white;
+}
+
+.ql-editor {
+    overflow-y: hidden !important;
+    min-height: 150px;
+    line-height: 1.6;
+    padding-bottom: 40px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+
+.ql-container {
+    font-size: 14px;
+    border: none !important;
+}
+.ql-font-arial {
+    font-family: Arial, sans-serif;
+}
+.ql-font-times-new-roman {
+    font-family: "Times New Roman", serif;
+}
+.ql-font-monospace {
+    font-family: monospace;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradientMove {
+    animation: gradientMove 4s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animate-gradientMove {
+    animation: gradientMove 4s ease infinite;
+}
+
+/* 숫자 리듬 애니메이션 */
+@keyframes countPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+.animate-countPulse {
+    animation: countPulse 2s ease-in-out infinite;
+}
+
+
+
+body { font-family: 'THEmpgt', sans-serif; }
