@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { List, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/context/ModalContext";
 
 export default function PartnersAdmin() {
     const [exchanges, setExchanges] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const router = useRouter();
+    const { showModal } = useModal();
 
     // ✅ 거래소 목록 불러오기
     useEffect(() => {
@@ -42,7 +44,7 @@ export default function PartnersAdmin() {
     // ✅ 삭제 기능
     const handleDelete = async () => {
         if (selectedIds.length === 0) {
-            alert("삭제할 항목을 선택하세요.");
+            await showModal("삭제할 항목을 선택하세요.", "warning");
             return;
         }
         if (!confirm("선택한 거래소를 삭제하시겠습니까?")) return;
@@ -55,18 +57,18 @@ export default function PartnersAdmin() {
             });
 
             if (res.ok) {
-                alert("삭제가 완료되었습니다.");
+                await showModal("삭제가 완료되었습니다.", "success");
                 setExchanges((prev) =>
                     prev.filter((ex) => !selectedIds.includes(ex.id))
                 );
                 setSelectedIds([]);
             } else {
                 const data = await res.json();
-                alert(data.message || "삭제 실패");
+                await showModal(data.message || "삭제 실패", "error");
             }
         } catch (err) {
             console.error("삭제 요청 오류:", err);
-            alert("서버 오류가 발생했습니다.");
+            await showModal("서버 오류가 발생했습니다.", "error");
         }
     };
 

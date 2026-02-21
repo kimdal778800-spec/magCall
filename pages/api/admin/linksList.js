@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
         // ✅ links 테이블 조회
         const [rows] = await conn.execute(
-            "SELECT id, name, url, image, DATE_FORMAT(createdAt, '%Y-%m-%d') AS createdAt FROM links ORDER BY id DESC"
+            "SELECT id, name, content, image, DATE_FORMAT(createdAt, '%Y-%m-%d') AS createdAt FROM links ORDER BY id DESC"
         );
         await conn.end();
 

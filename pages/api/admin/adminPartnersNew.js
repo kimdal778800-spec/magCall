@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css";
 import { ArrowLeft, Save, X } from "lucide-react";
+import { useModal } from "@/context/ModalContext";
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
 
 
@@ -25,6 +26,7 @@ export default function PartnersNew() {
     const [preview, setPreview] = useState(null);
     const [uploadedPath, setUploadedPath] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { showModal } = useModal();
     const fileInputRef = useRef(null);
     const quillRef = useRef(null);
 
@@ -63,7 +65,7 @@ export default function PartnersNew() {
                 setUploadedPath(data.filePath);
                 setFormData((prev) => ({ ...prev, logo: data.filePath }));
             } else {
-                alert(data.message || "이미지 업로드 실패");
+                await showModal(data.message || "이미지 업로드 실패", "error");
                 setPreview(null);
             }
         } catch (err) {
@@ -114,7 +116,7 @@ export default function PartnersNew() {
                 const range = editor.getSelection(true);
                 editor.insertEmbed(range.index, "image", data.url);
             } else {
-                alert(data.message || "이미지 업로드 실패");
+                await showModal(data.message || "이미지 업로드 실패", "error");
             }
         };
     };
@@ -160,14 +162,14 @@ export default function PartnersNew() {
 
             const data = await res.json();
             if (res.ok) {
-                alert("거래소가 성공적으로 등록되었습니다!");
+                await showModal("거래소가 성공적으로 등록되었습니다!", "success");
                 router.push("/admin/adminPartnerList");
             } else {
-                alert(data.message || "등록 중 오류가 발생했습니다.");
+                await showModal(data.message || "등록 중 오류가 발생했습니다.", "error");
             }
         } catch (err) {
             console.error("등록 오류:", err);
-            alert("서버 오류 발생");
+            await showModal("서버 오류 발생", "error");
         } finally {
             setIsSubmitting(false);
         }

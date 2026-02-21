@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/context/ModalContext";
 
 export default function Links() {
     const [links, setLinks] = useState([]);
     const [sessionUser, setSessionUser] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
     const router = useRouter();
+    const { showModal } = useModal();
 
     // ✅ 페이지 진입 시 로그인 및 level 체크
     useEffect(() => {
@@ -17,8 +19,8 @@ export default function Links() {
                 const res = await fetch("/api/me");
                 const data = await res.json();
 
-                if (!data.loggedIn || Number(data.user?.level) !== 9) {
-                    alert("접근 권한이 없습니다. 로그인 페이지로 이동합니다.");
+                if (!data.loggedIn || Number(data.user?.level) !== 99) {
+                    await showModal("접근 권한이 없습니다. 로그인 페이지로 이동합니다.", "warning");
                     router.push("/login");
                     return;
                 }
@@ -61,7 +63,7 @@ export default function Links() {
     // ✅ 선택 삭제
     const handleDelete = async () => {
         if (selectedIds.length === 0) {
-            alert("삭제할 항목을 선택하세요.");
+            await showModal("삭제할 항목을 선택하세요.", "warning");
             return;
         }
 
@@ -76,16 +78,16 @@ export default function Links() {
             });
 
             if (res.ok) {
-                alert("삭제가 완료되었습니다.");
+                await showModal("삭제가 완료되었습니다.", "success");
                 setLinks((prev) => prev.filter((item) => !selectedIds.includes(item.id)));
                 setSelectedIds([]);
             } else {
                 const data = await res.json();
-                alert(data.message || "삭제 실패");
+                await showModal(data.message || "삭제 실패", "error");
             }
         } catch (err) {
             console.error("삭제 요청 오류:", err);
-            alert("서버 오류가 발생했습니다.");
+            await showModal("서버 오류가 발생했습니다.", "error");
         }
     };
 
@@ -102,7 +104,7 @@ export default function Links() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
             <div className="bg-white w-full max-w-5xl rounded-2xl shadow-lg p-8 md:p-10">
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-8">
-                    📋 링크 게시판
+                    📋 슬라이드 관리
                 </h1>
 
                 {/* ✅ 리스트 */}
@@ -152,7 +154,7 @@ export default function Links() {
                         href="/admin/LinksNew"
                         className="bg-orange-500 text-white px-6 py-2.5 rounded-md font-semibold text-sm hover:bg-orange-600 transition shadow-sm"
                     >
-                        + 새 링크 작성
+                        + 새 슬라이드 작성
                     </Link>
 
                     <button

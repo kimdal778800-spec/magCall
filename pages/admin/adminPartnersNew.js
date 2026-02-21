@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css";
 import { ArrowLeft, Save, X } from "lucide-react";
+import { useModal } from "@/context/ModalContext";
 
 // ✅ react-quill은 SSR 시 document를 참조하므로 클라이언트 전용으로 로드
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -26,6 +27,7 @@ export default function PartnersNew() {
     const [preview, setPreview] = useState(null);
     const [uploadedPath, setUploadedPath] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { showModal } = useModal();
     const fileInputRef = useRef(null);
 
     const [modules, setModules] = useState();
@@ -78,7 +80,7 @@ export default function PartnersNew() {
                         quill.insertEmbed(range.index, "image", data.url);
                         quill.setSelection(range.index + 1);
                     } else {
-                        alert(data.message || "이미지 업로드 실패");
+                        await showModal(data.message || "이미지 업로드 실패", "error");
                     }
                 };
             };
@@ -152,7 +154,7 @@ export default function PartnersNew() {
                 setUploadedPath(data.filePath);
                 setFormData((prev) => ({ ...prev, logo: data.filePath }));
             } else {
-                alert(data.message || "이미지 업로드 실패");
+                await showModal(data.message || "이미지 업로드 실패", "error");
                 setPreview(null);
             }
         } catch (err) {
@@ -195,14 +197,14 @@ export default function PartnersNew() {
 
             const data = await res.json();
             if (res.ok) {
-                alert("거래소가 성공적으로 등록되었습니다!");
+                await showModal("거래소가 성공적으로 등록되었습니다!", "success");
                 router.push("/admin/adminPartnerList");
             } else {
-                alert(data.message || "등록 중 오류가 발생했습니다.");
+                await showModal(data.message || "등록 중 오류가 발생했습니다.", "error");
             }
         } catch (err) {
             console.error("등록 오류:", err);
-            alert("서버 오류 발생");
+            await showModal("서버 오류 발생", "error");
         } finally {
             setIsSubmitting(false);
         }
@@ -318,16 +320,19 @@ export default function PartnersNew() {
                         </div>
                     </div>
 
-                    {/* 태그 */}
+                    {/* 카테고리 */}
                     <div>
-                        <label className="block text-gray-700 font-medium mb-2">태그</label>
-                        <input
-                            type="text"
+                        <label className="block text-gray-700 font-medium mb-2">카테고리</label>
+                        <select
                             name="tag"
                             value={formData.tag}
                             onChange={handleChange}
                             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500"
-                        />
+                        >
+                            <option value="">선택하세요</option>
+                            <option value="출장마사지">출장마사지</option>
+                            <option value="테마별샵">테마별샵</option>
+                        </select>
                     </div>
 
                     {/* ✅ 거래소 설명 */}

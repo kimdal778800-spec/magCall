@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css";
 import { ArrowLeft, Save } from "lucide-react";
+import { useModal } from "@/context/ModalContext";
 
 // ✅ SSR 오류 방지용 동적 import
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -18,6 +19,7 @@ export default function ServiceInterNew() {
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { showModal } = useModal();
     const [modules, setModules] = useState();
     const [formats, setFormats] = useState();
 
@@ -68,7 +70,7 @@ export default function ServiceInterNew() {
                         quill.insertEmbed(range.index, "image", data.url);
                         quill.setSelection(range.index + 1);
                     } else {
-                        alert(data.message || "이미지 업로드 실패");
+                        await showModal(data.message || "이미지 업로드 실패", "error");
                     }
                 };
             };
@@ -128,14 +130,14 @@ export default function ServiceInterNew() {
 
             const data = await res.json();
             if (res.ok) {
-                alert("서비스 소개가 성공적으로 등록되었습니다!");
+                await showModal("서비스 소개가 성공적으로 등록되었습니다!", "success");
                 router.push("/admin/ServiceInter");
             } else {
-                alert(data.message || "등록 중 오류가 발생했습니다.");
+                await showModal(data.message || "등록 중 오류가 발생했습니다.", "error");
             }
         } catch (err) {
             console.error("등록 오류:", err);
-            alert("서버 오류 발생");
+            await showModal("서버 오류 발생", "error");
         } finally {
             setIsSubmitting(false);
         }

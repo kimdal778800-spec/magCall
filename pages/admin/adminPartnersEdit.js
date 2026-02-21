@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css";
 import { ArrowLeft, Save, X } from "lucide-react";
+import { useModal } from "@/context/ModalContext";
 
 // ✅ react-quill은 클라이언트 전용으로 로드 (SSR 차단)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -29,6 +30,7 @@ export default function PartnersEdit() {
     const [preview, setPreview] = useState(null);
     const [uploadedPath, setUploadedPath] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { showModal } = useModal();
     const fileInputRef = useRef(null);
     const quillRef = useRef(null);
 
@@ -107,12 +109,12 @@ export default function PartnersEdit() {
                     setPreview(data.exchange.logo);
                     setUploadedPath(data.exchange.logo);
                 } else {
-                    alert("데이터를 불러오지 못했습니다.");
+                    await showModal("데이터를 불러오지 못했습니다.", "error");
                     router.push("/admin/adminPartnerList");
                 }
             } catch (err) {
                 console.error("데이터 로드 오류:", err);
-                alert("서버 오류가 발생했습니다.");
+                await showModal("서버 오류가 발생했습니다.", "error");
             }
         };
         if (id) fetchData();
@@ -150,7 +152,7 @@ export default function PartnersEdit() {
                 setUploadedPath(data.filePath);
                 setFormData((prev) => ({ ...prev, logo: data.filePath }));
             } else {
-                alert(data.message || "이미지 업로드 실패");
+                await showModal(data.message || "이미지 업로드 실패", "error");
                 setPreview(null);
             }
         } catch (err) {
@@ -206,7 +208,7 @@ export default function PartnersEdit() {
                 quill.insertEmbed(range.index, "image", data.url);
                 quill.setSelection(range.index + 1);
             } else {
-                alert(data.message || "이미지 업로드 실패");
+                await showModal(data.message || "이미지 업로드 실패", "error");
             }
         };
     };
@@ -227,14 +229,14 @@ export default function PartnersEdit() {
 
             const data = await res.json();
             if (res.ok) {
-                alert("거래소 정보가 성공적으로 수정되었습니다!");
+                await showModal("거래소 정보가 성공적으로 수정되었습니다!", "success");
                 router.push("/admin/adminPartnerList");
             } else {
-                alert(data.message || "수정 중 오류 발생");
+                await showModal(data.message || "수정 중 오류 발생", "error");
             }
         } catch (err) {
             console.error("수정 오류:", err);
-            alert("서버 오류 발생");
+            await showModal("서버 오류 발생", "error");
         } finally {
             setIsSubmitting(false);
         }

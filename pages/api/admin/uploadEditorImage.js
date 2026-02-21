@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             multiples: false,
             keepExtensions: true,
             uploadDir,
-            maxFileSize: 2 * 1024 * 1024,
+            maxFileSize: 10 * 1024 * 1024,
         });
 
         form.parse(req, (err, fields, files) => {

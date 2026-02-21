@@ -62,7 +62,7 @@ export default async function handler(req, res) {
         // ✅ 안전하게 값 추출
         const id = Number(getValue(fields.id));
         const name = getValue(fields.name);
-        const url = getValue(fields.url);
+        const content = getValue(fields.content) || "";
         const oldImage = getValue(fields.oldImage);
         const imageFile = files.image
             ? Array.isArray(files.image)
@@ -98,13 +98,13 @@ export default async function handler(req, res) {
 
         // ✅ DB 업데이트
         await conn.execute(
-            "UPDATE links SET name=?, url=?, image=? WHERE id=?",
-            [name, url, imagePath, id]
+            "UPDATE links SET name=?, content=?, image=? WHERE id=?",
+            [name, content, imagePath, id]
         );
 
         await conn.end();
 
-        console.log(`✅ 링크(${id}) 업데이트 완료:`, { name, url, imagePath });
+        console.log(`✅ 링크(${id}) 업데이트 완료:`, { name, content: content?.slice(0, 50), imagePath });
 
         return res.status(200).json({ message: "링크 수정이 완료되었습니다." });
     } catch (error) {

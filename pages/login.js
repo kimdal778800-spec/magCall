@@ -8,7 +8,7 @@ import AlertModal from "@/components/AlertModal";
 export default function Login() {
     const router = useRouter();
     const { login } = useAuth(); // ✅ Context 접근
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [modal, setModal] = useState({ show: false, title: "", message: "" });
@@ -22,7 +22,7 @@ export default function Login() {
         const res = await fetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ username, password }),
         });
 
         const data = await res.json();
@@ -35,7 +35,7 @@ export default function Login() {
                 setTimeout(() => router.push("/"), 1000);
             // }
         } else {
-            openModal("로그인 실패", "이메일 또는 비밀번호를 확인해주세요.","error");
+            openModal("로그인 실패", "아이디 또는 비밀번호를 확인해주세요.","error");
         }
     };
 
@@ -46,21 +46,21 @@ export default function Login() {
                     <h1 className="text-2xl font-bold text-center mb-12">로그인</h1>
 
                     <form onSubmit={handleLogin} className="space-y-8">
-                        {/* 이메일 */}
+                        {/* 아이디 */}
                         <div>
                             <label
-                                htmlFor="email"
+                                htmlFor="username"
                                 className="block text-sm font-medium text-gray-600 mb-2"
                             >
-                                이메일
+                                아이디
                             </label>
                             <div className="flex items-center border-b border-gray-300 pb-1">
                                 <input
-                                    id="email"
-                                    type="email"
-                                    placeholder="이메일을 입력하세요"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    id="username"
+                                    type="text"
+                                    placeholder="아이디를 입력하세요"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     required
                                     className="flex-1 bg-transparent outline-none text-gray-800"
                                 />

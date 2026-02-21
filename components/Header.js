@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
-import MobileMenu from "@/components/MobileMenu"; // ✅ 추가
+import MobileMenu from "@/components/MobileMenu";
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -61,12 +61,12 @@ export default function Header() {
     return (
         <header
             className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-                isScrolled ? "bg-white shadow-md" : "bg-blue-50"
+                isScrolled ? "bg-pink-50 shadow-md" : "bg-pink-50"
             }`}
         >
             <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
                 {/* 로고 */}
-                <Link href="/" className="flex items-center">
+                <Link href="/" className="flex items-center shrink-0">
                     <img
                         src="/logos/logo.png"
                         alt="로고"
@@ -74,42 +74,27 @@ export default function Header() {
                     />
                 </Link>
 
-                {/* 데스크탑 메뉴 */}
+                {/* 데스크탑 우측 메뉴 */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
                     <Link
-                        href="/serviceInter/1"
+                        href="/service"
                         className="text-gray-700 hover:text-orange-500 transition"
                     >
                         서비스 소개
                     </Link>
                     <Link
-                        href="/exchange"
+                        href="/partners"
                         className="text-gray-700 hover:text-orange-500 transition"
                     >
-                        제휴 거래소
+                        제휴 업소
                     </Link>
-
-                    {currentUser && Number(level) === 9 && (
-                        <select
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (value) router.push(`/${value}`);
-                            }}
-                            className="p-2 border-b border-gray-300 bg-transparent outline-none text-gray-800"
-                        >
-                            <option value="">선택</option>
-                            <option value="admin/ServiceInter">서비스 소개</option>
-                            <option value="admin/links">링크</option>
-                            <option value="admin/adminPartnerList">제휴 거래소</option>
-                        </select>
-                    )}
 
                     {currentUser ? (
                         <div className="flex items-center gap-3">
-              <span className="text-gray-700 font-medium">
-                👋 {currentUser.name || currentUser.email}{" "}
-                  {level === 9 && "관리자"} 님
-              </span>
+                            <span className="text-gray-700 font-medium">
+                                👋 {currentUser.name || currentUser.email}{" "}
+                                {level === 99 && "관리자"} 님
+                            </span>
                             <button
                                 onClick={handleLogout}
                                 className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-100 transition"
@@ -146,7 +131,7 @@ export default function Header() {
                 )}
             </div>
 
-            {/* ✅ 분리된 모바일 메뉴 */}
+            {/* 분리된 모바일 메뉴 */}
             {isMobile && (
                 <MobileMenu
                     isOpen={menuOpen}
@@ -155,6 +140,7 @@ export default function Header() {
                     handleLogout={handleLogout}
                 />
             )}
+
         </header>
     );
 }

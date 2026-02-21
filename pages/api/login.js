@@ -7,9 +7,9 @@ export default async function handler(req, res) {
     if (req.method !== "POST")
         return res.status(405).json({ message: "Method not allowed" });
 
-    const { email, password } = req.body;
-    if (!email || !password)
-        return res.status(400).json({ message: "이메일과 비밀번호를 입력하세요." });
+    const { username, password } = req.body;
+    if (!username || !password)
+        return res.status(400).json({ message: "아이디와 비밀번호를 입력하세요." });
 
     try {
         const conn = await mysql.createConnection({
@@ -20,11 +20,11 @@ export default async function handler(req, res) {
             database: process.env.DB_NAME,
         });
 
-        const [rows] = await conn.execute("SELECT * FROM users WHERE email = ?", [email]);
+        const [rows] = await conn.execute("SELECT * FROM users WHERE username = ?", [username]);
         await conn.end();
 
         if (rows.length === 0)
-            return res.status(401).json({ message: "존재하지 않는 이메일입니다." });
+            return res.status(401).json({ message: "존재하지 않는 아이디입니다." });
 
         const user = rows[0];
         const isMatch = await bcrypt.compare(password, user.password);

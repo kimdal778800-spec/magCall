@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { ModalProvider } from "@/context/ModalContext";
 import Head from "next/head";
 import { useScrollRestoration } from "@/components/hooks/useScrollRestoration";
 
@@ -10,6 +11,7 @@ export default function App({ Component, pageProps }) {
     useScrollRestoration();
     return (
         <AuthProvider>
+        <ModalProvider>
             <>
                 <Head key="global-favicon">
                     {/* ✅ 폰트 프리로드 */}
@@ -45,6 +47,7 @@ export default function App({ Component, pageProps }) {
                     <Footer />
                 </div>
             </>
+        </ModalProvider>
         </AuthProvider>
     );
 }

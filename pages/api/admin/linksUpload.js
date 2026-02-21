@@ -50,12 +50,12 @@ export default async function handler(req, res) {
                 else resolve({ fields, files });
             });
         });
-        const { name, url} = fields;
+        const { name, content } = fields;
         const img = Array.isArray(files.image) ? files.image[0] : files.image;
         if (!img) return res.status(400).json({ message: "이미지 파일이 없습니다." });
 
         const nameValue = Array.isArray(name) ? name[0] : name;
-        const urlValue = Array.isArray(url) ? url[0] : url;
+        const contentValue = Array.isArray(content) ? content[0] : (content || "");
 
         const fileName = path.basename(img.filepath);
         const imagePath = `/images/${fileName}`;
@@ -70,14 +70,14 @@ export default async function handler(req, res) {
         });
 
         await conn.execute(
-            "INSERT INTO links (name, url, image) VALUES (?, ?, ?)",
-            [nameValue, urlValue, imagePath]
+            "INSERT INTO links (name, content, image) VALUES (?, ?, ?)",
+            [nameValue, contentValue, imagePath]
         );
         await conn.end();
 
         return res.status(200).json({
             message: "업로드 및 DB 저장 성공",
-            link: { name, url, image: imagePath},
+            link: { name, content: contentValue, image: imagePath },
         });
     } catch (err) {
         console.error("업로드 처리 중 오류:", err);
