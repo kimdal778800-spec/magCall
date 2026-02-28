@@ -24,23 +24,28 @@ export default async function handler(req, res) {
             await conn.execute("ALTER TABLE massage_shops ADD COLUMN telegram VARCHAR(100) DEFAULT NULL");
         }
 
-        let query = "SELECT id, name, image, category, theme_type, region, sub_region, phone, telegram FROM massage_shops WHERE is_active = 1";
+        let query = `
+            SELECT s.id, s.name, s.image, s.category, s.theme_type, s.region, s.sub_region, s.phone, s.telegram,
+                   s.is_special, COUNT(c.id) AS comment_count
+            FROM massage_shops s
+            LEFT JOIN shop_comments c ON c.shop_id = s.id
+            WHERE s.is_active = 1`;
         const params = [];
 
         if (category && category !== "all") {
-            query += " AND category = ?";
+            query += " AND s.category = ?";
             params.push(category);
         }
         if (region && region !== "all") {
-            query += " AND region = ?";
+            query += " AND s.region = ?";
             params.push(region);
         }
         if (sub_region) {
-            query += " AND sub_region = ?";
+            query += " AND s.sub_region = ?";
             params.push(sub_region);
         }
 
-        query += " ORDER BY id DESC";
+        query += " GROUP BY s.id ORDER BY s.id DESC";
 
         const [rows] = await conn.execute(query, params);
         await conn.end();

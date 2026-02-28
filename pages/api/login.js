@@ -41,8 +41,7 @@ export default async function handler(req, res) {
         // ✅ 쿠키 설정
         const cookie = serialize("token", token, {
             httpOnly: true,
-            secure: false,
-            // secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
             maxAge: 2 * 60 * 60, // 2시간

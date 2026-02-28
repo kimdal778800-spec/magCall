@@ -282,7 +282,7 @@ export default function ShopsSection() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-                            {filtered.map((shop, idx) => {
+                            {[...filtered].sort((a, b) => (b.is_special == 1 ? 1 : 0) - (a.is_special == 1 ? 1 : 0)).map((shop, idx) => {
                                 const gradients = [
                                     "from-pink-400 via-fuchsia-400 to-blue-400",
                                     "from-blue-400 via-cyan-400 to-pink-400",
@@ -290,10 +290,15 @@ export default function ShopsSection() {
                                     "from-indigo-400 via-blue-400 to-pink-500",
                                 ];
                                 const grad = gradients[idx % gradients.length];
+                                const isSpecial = shop.is_special == 1;
                                 return (
                                 <div
                                     key={shop.id}
-                                    className={`bg-gradient-to-br ${grad} p-[2px] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1`}
+                                    className={`p-[2px] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 ${
+                                        isSpecial
+                                            ? "special-border-shimmer shadow-red-200"
+                                            : `bg-gradient-to-br ${grad}`
+                                    }`}
                                     onClick={() => router.push(`/shops/${shop.id}`)}
                                 >
                                 <div className="bg-white rounded-[14px] overflow-hidden h-full">
@@ -301,8 +306,22 @@ export default function ShopsSection() {
                                         <img
                                             src={shop.image}
                                             alt={shop.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                         />
+                                        {isSpecial && (
+                                            <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                                                <span>⭐</span>
+                                                <span>스페셜 픽</span>
+                                            </div>
+                                        )}
+                                        {shop.comment_count > 0 && (
+                                            <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
+                                                    <path fillRule="evenodd" d="M4.804 21.644A6.707 6.707 0 0 0 6 21.75a6.721 6.721 0 0 0 3.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 0 1-.814 1.686.75.75 0 0 0 .44 1.223Z" clipRule="evenodd" />
+                                                </svg>
+                                                {shop.comment_count}
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="p-3 flex flex-col gap-1.5">
                                         <h3 className="font-bold text-gray-800 text-sm truncate">{shop.name}</h3>

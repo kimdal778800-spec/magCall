@@ -11,6 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 function LogoItem({ logo }) {
     const controls = useAnimationControls();
     const MotionLink = motion(Link);
+    const isSpecial = logo.isSpecial;
 
     const wiggle = () => {
         const r1 = Math.random() * 6 - 3;
@@ -36,20 +37,15 @@ function LogoItem({ logo }) {
             }
             whileTap={{ scale: 0.95 }}
         >
-            <motion.img
-                src={logo.src}
-                alt="logo"
-                initial={{ rotate: 0, y: 0 }}
-                animate={controls}
-                className="
-                h-[120px] w-[120px]
-                object-cover object-center
-                rounded-xl
-                bg-transparent   /* ✅ 완전 투명 */
-                transition-all duration-300
-                hover:scale-110 hover:brightness-110
-              "
-            />
+            <div className={isSpecial ? "p-[2px] rounded-xl special-border-shimmer" : ""}>
+                <motion.img
+                    src={logo.src}
+                    alt="logo"
+                    initial={{ rotate: 0, y: 0 }}
+                    animate={controls}
+                    className="h-[120px] w-[120px] object-cover object-center rounded-xl bg-white transition-all duration-300 hover:scale-110 hover:brightness-110"
+                />
+            </div>
         </MotionLink>
     );
 }
@@ -122,6 +118,7 @@ export default function Home() {
                         .map((s) => ({
                             src: s.image,
                             link: `/shops/${s.id}`,
+                            isSpecial: s.is_special == 1,
                         }));
                     setLogos(mapped);
                 }

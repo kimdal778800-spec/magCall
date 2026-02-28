@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css";
 
 export default function SlideDetail() {
@@ -81,7 +82,7 @@ export default function SlideDetail() {
                             {slide.content ? (
                                 <div
                                     className="ql-editor slide-content"
-                                    dangerouslySetInnerHTML={{ __html: slide.content }}
+                                    dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(slide.content) : slide.content }}
                                 />
                             ) : (
                                 <p className="text-gray-400 text-sm text-center py-8">

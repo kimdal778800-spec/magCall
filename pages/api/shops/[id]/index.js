@@ -24,8 +24,16 @@ export default async function handler(req, res) {
             await conn.execute("ALTER TABLE massage_shops ADD COLUMN telegram VARCHAR(100) DEFAULT NULL");
         }
 
+        // is_special 컬럼이 없으면 자동 추가
+        const [specialCols] = await conn.execute(
+            "SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'massage_shops' AND COLUMN_NAME = 'is_special'"
+        );
+        if (specialCols[0].cnt === 0) {
+            await conn.execute("ALTER TABLE massage_shops ADD COLUMN is_special TINYINT(1) DEFAULT 0");
+        }
+
         const [rows] = await conn.execute(
-            "SELECT id, name, image, category, theme_type, region, sub_region, phone, telegram, description FROM massage_shops WHERE id = ? AND is_active = 1",
+            "SELECT id, name, image, category, theme_type, region, sub_region, phone, telegram, description, is_special FROM massage_shops WHERE id = ? AND is_active = 1",
             [id]
         );
         await conn.end();

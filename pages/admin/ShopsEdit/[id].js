@@ -47,6 +47,8 @@ export default function ShopsEdit() {
     const [imageFile, setImageFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [currentImage, setCurrentImage] = useState("");
+    const [deleteImage, setDeleteImage] = useState(false);
+    const [isSpecial, setIsSpecial] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
@@ -91,6 +93,7 @@ export default function ShopsEdit() {
                     setTelegram(s.telegram || "");
                     setDescription(s.description || "");
                     setCurrentImage(s.image || "");
+                    setIsSpecial(!!s.is_special);
                 } else {
                     await showModal("업체 정보를 불러올 수 없습니다.", "error");
                     router.push("/admin/ShopsList");
@@ -115,6 +118,19 @@ export default function ShopsEdit() {
         if (!file) return;
         setImageFile(file);
         setPreview(URL.createObjectURL(file));
+        setDeleteImage(false);
+    };
+
+    const handleCancelPreview = () => {
+        setPreview(null);
+        setImageFile(null);
+    };
+
+    const handleDeleteCurrentImage = async () => {
+        const confirmed = await showModal("대표 이미지를 삭제하시겠습니까?", "confirm");
+        if (!confirmed) return;
+        setCurrentImage("");
+        setDeleteImage(true);
     };
 
     const handleRegionChange = (e) => {
@@ -186,7 +202,9 @@ export default function ShopsEdit() {
         form.append("phone", phone);
         form.append("telegram", telegram);
         form.append("description", description);
+        form.append("is_special", isSpecial ? "true" : "false");
         if (imageFile) form.append("image", imageFile);
+        if (deleteImage && !imageFile) form.append("delete_image", "true");
 
         try {
             const res = await fetch("/api/admin/shopsUpdate", { method: "POST", body: form });
@@ -244,6 +262,33 @@ export default function ShopsEdit() {
                             ))}
                         </div>
                     </div>
+
+                    {/* 스페셜 픽 */}
+                    <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        isSpecial ? "border-yellow-400 bg-yellow-50" : "border-gray-200 bg-white hover:border-yellow-300"
+                    }`}>
+                        <input
+                            type="checkbox"
+                            checked={isSpecial}
+                            onChange={(e) => setIsSpecial(e.target.checked)}
+                            className="sr-only"
+                        />
+                        <span className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-all flex-shrink-0 ${
+                            isSpecial ? "bg-yellow-400 border-yellow-400" : "border-gray-300 bg-white"
+                        }`}>
+                            {isSpecial && (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-white">
+                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                                </svg>
+                            )}
+                        </span>
+                        <div>
+                            <span className="font-bold text-sm text-gray-800 flex items-center gap-1">
+                                ⭐ 스페셜 픽
+                            </span>
+                            <span className="text-xs text-gray-400 mt-0.5 block">체크 시 스페셜 픽으로 표시됩니다.</span>
+                        </div>
+                    </label>
 
                     {/* 테마 종류 (테마별샵 선택 시) */}
                     {category === "theme" && (
@@ -349,21 +394,48 @@ export default function ShopsEdit() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">대표 이미지</label>
                         {/* 현재 이미지 */}
                         {currentImage && !preview && (
-                            <div className="mb-2">
+                            <div className="mb-3">
                                 <p className="text-xs text-gray-400 mb-1">현재 이미지</p>
-                                <div className="w-24 aspect-[3/4] overflow-hidden rounded-xl border border-gray-200">
-                                    <img src={currentImage} alt="현재 이미지" className="w-full h-full object-cover" />
+                                <div className="relative inline-block">
+                                    <div className="w-24 aspect-[3/4] overflow-hidden rounded-xl border border-gray-200">
+                                        <img src={currentImage} alt="현재 이미지" className="w-full h-full object-cover" />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleDeleteCurrentImage}
+                                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 shadow-md transition"
+                                        title="이미지 삭제"
+                                    >
+                                        ✕
+                                    </button>
                                 </div>
                             </div>
+                        )}
+                        {deleteImage && !imageFile && (
+                            <p className="text-xs text-red-400 mb-2">저장 시 이미지가 삭제됩니다.</p>
                         )}
                         <input
                             type="file" accept="image/*" onChange={handleImageChange}
                             className="block w-full text-sm text-gray-600 border border-gray-300 rounded-md p-2 cursor-pointer"
                         />
                         <p className="text-xs text-gray-400 mt-1">새 파일을 선택하면 기존 이미지가 교체됩니다.</p>
+                        {/* 새 이미지 미리보기 */}
                         {preview && (
-                            <div className="mt-2 w-24 aspect-[3/4] overflow-hidden rounded-xl border border-gray-200">
-                                <img src={preview} alt="새 이미지 미리보기" className="w-full h-full object-cover" />
+                            <div className="mt-3">
+                                <p className="text-xs text-gray-400 mb-1">새 이미지 미리보기</p>
+                                <div className="relative inline-block">
+                                    <div className="w-24 aspect-[3/4] overflow-hidden rounded-xl border border-pink-200">
+                                        <img src={preview} alt="새 이미지 미리보기" className="w-full h-full object-cover" />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelPreview}
+                                        className="absolute -top-2 -right-2 w-6 h-6 bg-gray-400 text-white rounded-full text-xs flex items-center justify-center hover:bg-gray-500 shadow-md transition"
+                                        title="선택 취소"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>

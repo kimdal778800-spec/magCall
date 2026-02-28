@@ -1,6 +1,7 @@
 // pages/exchange/[id].js
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import DOMPurify from "dompurify";
 
 export default function ExchangeDetail() {
     const router = useRouter();
@@ -138,7 +139,7 @@ export default function ExchangeDetail() {
 
                 <div
                     className="prose max-w-none ql-editor"
-                    dangerouslySetInnerHTML={{ __html: exchange.description }}
+                    dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(exchange.description) : exchange.description }}
                 ></div>
 
             </div>

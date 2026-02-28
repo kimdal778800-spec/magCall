@@ -1,6 +1,7 @@
-// pages/exchange/[id].js
+// pages/serviceInter/[id].js
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import DOMPurify from "dompurify";
 
 export default function ExchangeDetail() {
     const router = useRouter();
@@ -90,7 +91,7 @@ export default function ExchangeDetail() {
                 {/*<h2 className="text-lg font-semibold text-gray-800 mb-3">서비스 소개</h2>*/}
                 <div
                     className="prose max-w-none ql-editor"
-                    dangerouslySetInnerHTML={{ __html: serviceInter.description }}
+                    dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(serviceInter.description) : serviceInter.description }}
                 ></div>
             </div>
 

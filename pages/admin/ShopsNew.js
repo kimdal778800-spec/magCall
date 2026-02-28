@@ -45,6 +45,7 @@ export default function ShopsNew() {
     const [imageFile, setImageFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [description, setDescription] = useState("");
+    const [isSpecial, setIsSpecial] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -154,6 +155,7 @@ export default function ShopsNew() {
         form.append("phone", phone);
         form.append("telegram", telegram);
         form.append("description", description);
+        form.append("is_special", isSpecial ? "true" : "false");
         if (imageFile) form.append("image", imageFile);
 
         try {
@@ -207,6 +209,33 @@ export default function ShopsNew() {
                             ))}
                         </div>
                     </div>
+
+                    {/* 스페셜 픽 */}
+                    <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        isSpecial ? "border-yellow-400 bg-yellow-50" : "border-gray-200 bg-white hover:border-yellow-300"
+                    }`}>
+                        <input
+                            type="checkbox"
+                            checked={isSpecial}
+                            onChange={(e) => setIsSpecial(e.target.checked)}
+                            className="sr-only"
+                        />
+                        <span className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-all flex-shrink-0 ${
+                            isSpecial ? "bg-yellow-400 border-yellow-400" : "border-gray-300 bg-white"
+                        }`}>
+                            {isSpecial && (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-white">
+                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                                </svg>
+                            )}
+                        </span>
+                        <div>
+                            <span className="font-bold text-sm text-gray-800 flex items-center gap-1">
+                                ⭐ 스페셜 픽
+                            </span>
+                            <span className="text-xs text-gray-400 mt-0.5 block">체크 시 스페셜 픽으로 표시됩니다.</span>
+                        </div>
+                    </label>
 
                     {/* 테마 종류 */}
                     {category === "theme" && (

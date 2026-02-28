@@ -177,6 +177,18 @@
 .sparkle-float { animation: sparkleFloat var(--dur, 2.5s) ease-in-out var(--delay, 0s) infinite; }
 .sparkle-pop   { animation: sparklePop   var(--dur, 1.8s) ease-in-out var(--delay, 0s) infinite; }
 
+/* 스페셜 픽 테두리 반짝임 */
+@keyframes specialShimmer {
+    0%   { background-position: 0% 50%;   filter: brightness(1); }
+    50%  { background-position: 100% 50%; filter: brightness(1.35); }
+    100% { background-position: 0% 50%;   filter: brightness(1); }
+}
+.special-border-shimmer {
+    background: linear-gradient(270deg, #ef4444, #f97316, #f43f5e, #fb923c, #ef4444);
+    background-size: 400% 400%;
+    animation: specialShimmer 2s ease infinite;
+}
+
 /* 모달 팝업 애니메이션 */
 @keyframes modalPop {
     0%   { opacity: 0; transform: scale(0.85) translateY(10px); }

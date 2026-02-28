@@ -1,11 +1,14 @@
 import mysql from "mysql2/promise";
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
+
+    if (!requireAdmin(req, res)) return;
 
     try {
         const { ids } = req.body;

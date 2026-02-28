@@ -1,10 +1,13 @@
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
+
+    if (!requireAdmin(req, res)) return;
 
     try {
         const { filePath } = req.body;
@@ -14,7 +17,11 @@ export default async function handler(req, res) {
         }
 
         // ✅ public 경로 기준으로 실제 파일 경로 구성
-        const absolutePath = path.join(process.cwd(), "public", filePath);
+        const publicDir = path.join(process.cwd(), "public");
+        const absolutePath = path.resolve(publicDir, filePath.replace(/^\//, ""));
+        if (!absolutePath.startsWith(publicDir + path.sep)) {
+            return res.status(400).json({ message: "잘못된 파일 경로입니다." });
+        }
 
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);

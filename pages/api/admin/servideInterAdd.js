@@ -1,16 +1,15 @@
 import mysql from "mysql2/promise";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
 
+    if (!requireAdmin(req, res)) return;
+
     try {
         const { name, logo, description } = req.body;
-
-        // if (!name || !logo) {
-        //     return res.status(400).json({ message: "거래소명과 로고는 필수 항목입니다." });
-        // }
 
         const conn = await mysql.createConnection({
             host: process.env.DB_HOST,

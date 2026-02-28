@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import formidable from "formidable";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export const config = {
     api: { bodyParser: false },
@@ -10,6 +11,8 @@ export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
+
+    if (!requireAdmin(req, res)) return;
 
     try {
         const uploadDir = path.join(process.cwd(), "public", "images", "EditorImage");
@@ -33,6 +36,13 @@ export default async function handler(req, res) {
 
             const file = Array.isArray(files.image) ? files.image[0] : files.image;
             if (!file) return res.status(400).json({ message: "이미지가 없습니다." });
+
+            const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+            const ext = path.extname(file.originalFilename || "").toLowerCase();
+            if (!allowedExtensions.includes(ext)) {
+                if (fs.existsSync(file.filepath)) fs.unlinkSync(file.filepath);
+                return res.status(400).json({ message: "jpg, jpeg, png, webp 파일만 허용됩니다." });
+            }
 
             const publicPath = `/images/EditorImage/${path.basename(file.filepath)}`;
             return res.status(200).json({ url: publicPath });

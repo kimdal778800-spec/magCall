@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import { useModal } from "@/context/ModalContext";
+import DOMPurify from "dompurify";
 
 export default function Service() {
     const router = useRouter();
@@ -77,7 +78,7 @@ export default function Service() {
                                 </div>
                                 <div
                                     className="ql-editor shop-content prose max-w-none text-gray-700"
-                                    dangerouslySetInnerHTML={{ __html: item.content }}
+                                    dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(item.content) : item.content }}
                                 />
                             </div>
                         ))}

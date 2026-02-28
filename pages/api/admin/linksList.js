@@ -1,34 +1,15 @@
 // ✅ /pages/api/admin/linksList.js
 import mysql from "mysql2/promise";
-import jwt from "jsonwebtoken";
-import cookie from "cookie";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
     if (req.method !== "GET") {
         return res.status(405).json({ message: "Method not allowed" });
     }
 
-    try {
-        // ✅ JWT 인증 (쿠키 확인)
-        // const cookies = cookie.parse(req.headers.cookie || "");
-        // const token = cookies.token;
-        //
-        // if (!token) {
-        //     return res.status(401).json({ message: "로그인이 필요합니다." });
-        // }
-        //
-        // let decoded;
-        // try {
-        //     decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // } catch {
-        //     return res.status(401).json({ message: "유효하지 않은 세션입니다." });
-        // }
-        //
-        // // ✅ level 확인 (관리자만)
-        // if (decoded.level !== 9) {
-        //     return res.status(403).json({ message: "관리자만 접근 가능합니다." });
-        // }
+    if (!requireAdmin(req, res)) return;
 
+    try {
         // ✅ DB 연결
         const conn = await mysql.createConnection({
             host: process.env.DB_HOST,

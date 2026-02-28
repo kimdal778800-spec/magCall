@@ -2,6 +2,7 @@ import mysql from "mysql2/promise";
 import formidable from "formidable";
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export const config = { api: { bodyParser: false } };
 
@@ -9,6 +10,8 @@ export default async function handler(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
+
+    if (!requireAdmin(req, res)) return;
 
     const uploadDir = path.join(process.cwd(), "public", "images", "AffiliateImage");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -28,6 +31,15 @@ export default async function handler(req, res) {
         }
 
         const file = Array.isArray(files.image) ? files.image[0] : files.image;
+        if (file) {
+            const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+            const ext = path.extname(file.originalFilename || "").toLowerCase();
+            if (!allowedExtensions.includes(ext)) {
+                if (fs.existsSync(file.filepath)) fs.unlinkSync(file.filepath);
+                return res.status(400).json({ message: "jpg, jpeg, png, webp 파일만 허용됩니다." });
+            }
+        }
+
         const imagePath = file ? `/images/AffiliateImage/${path.basename(file.filepath)}` : "";
 
         try {

@@ -1,9 +1,12 @@
 import mysql from "mysql2/promise";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
     if (req.method !== "GET") {
         return res.status(405).json({ message: "Method not allowed" });
     }
+
+    if (!requireAdmin(req, res)) return;
 
     try {
         const conn = await mysql.createConnection({

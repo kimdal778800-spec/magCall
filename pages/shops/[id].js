@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import DOMPurify from "dompurify";
 import { useModal } from "@/context/ModalContext";
 import { REGIONS, TABS } from "@/components/ShopsSection";
 
@@ -311,7 +312,7 @@ export default function ShopDetail() {
                             {shop.description && (
                                 <div
                                     className="ql-editor shop-content text-gray-700 text-sm leading-relaxed"
-                                    dangerouslySetInnerHTML={{ __html: shop.description }}
+                                    dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(shop.description) : shop.description }}
                                 />
                             )}
                         </div>
