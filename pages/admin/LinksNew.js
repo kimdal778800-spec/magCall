@@ -98,8 +98,9 @@ export default function NewLinkPage() {
             });
             const data = await res.json();
             const range = quill.getSelection(true);
-            quill.insertEmbed(range.index, "image", data.url);
-            quill.setSelection(range.index + 1);
+            const insertIndex = range ? range.index : quill.getLength();
+            quill.insertEmbed(insertIndex, "image", data.url);
+            quill.setSelection(insertIndex + 1);
         } catch (err) {
             console.error("이미지 업로드 오류:", err);
             await showModal("이미지 업로드에 실패했습니다.", "error");

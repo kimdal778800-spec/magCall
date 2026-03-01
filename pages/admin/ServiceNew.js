@@ -44,7 +44,8 @@ export default function ServiceNew() {
                     editor.insertEmbed(insertIndex, "image", data.url);
                     editor.setSelection(insertIndex + 1);
                 }
-            } catch {
+            } catch (err) {
+                console.error("에디터 이미지 삽입 오류:", err);
                 await showModal("이미지 업로드에 실패했습니다.", "error");
             }
         };

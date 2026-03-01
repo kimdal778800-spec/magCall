@@ -77,8 +77,9 @@ export default function PartnersNew() {
                     if (res.ok) {
                         const quill = this.quill;
                         const range = quill.getSelection(true);
-                        quill.insertEmbed(range.index, "image", data.url);
-                        quill.setSelection(range.index + 1);
+                        const insertIndex = range ? range.index : quill.getLength();
+                        quill.insertEmbed(insertIndex, "image", data.url);
+                        quill.setSelection(insertIndex + 1);
                     } else {
                         await showModal(data.message || "이미지 업로드 실패", "error");
                     }
