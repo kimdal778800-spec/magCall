@@ -66,12 +66,12 @@ export default function Header() {
         >
             <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
                 {/* 로고 */}
-                <Link href="/" className="flex items-center shrink-0">
-                    <img
-                        src="/logos/logo.png"
-                        alt="로고"
-                        className="block h-12 md:h-18 w-auto origin-left scale-150 md:scale-x-225"
-                    />
+                <Link href="/" className="flex items-center gap-2 shrink-0">
+                    <span className="text-2xl md:text-3xl">📞</span>
+                    <span className="text-xl md:text-2xl font-extrabold tracking-tight">
+                        <span className="text-gray-800 dark:text-white">마사지</span>
+                        <span className="text-red-500">콜</span>
+                    </span>
                 </Link>
 
                 {/* 데스크탑 우측 메뉴 */}
