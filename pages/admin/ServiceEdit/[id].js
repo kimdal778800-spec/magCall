@@ -57,7 +57,9 @@ export default function ServiceEdit() {
                 if (data.url) {
                     const editor = quillRef.current.getEditor();
                     const range = editor.getSelection(true);
-                    editor.insertEmbed(range.index, "image", data.url);
+                    const insertIndex = range ? range.index : editor.getLength();
+                    editor.insertEmbed(insertIndex, "image", data.url);
+                    editor.setSelection(insertIndex + 1);
                 }
             } catch {
                 await showModal("이미지 업로드에 실패했습니다.", "error");

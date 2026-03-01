@@ -114,7 +114,9 @@ export default function PartnersNew() {
             if (res.ok && quillRef.current) {
                 const editor = quillRef.current.getEditor();
                 const range = editor.getSelection(true);
-                editor.insertEmbed(range.index, "image", data.url);
+                const insertIndex = range ? range.index : editor.getLength();
+                editor.insertEmbed(insertIndex, "image", data.url);
+                editor.setSelection(insertIndex + 1);
             } else {
                 await showModal(data.message || "이미지 업로드 실패", "error");
             }
