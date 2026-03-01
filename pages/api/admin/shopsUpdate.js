@@ -46,6 +46,7 @@ export default async function handler(req, res) {
                 if (fs.existsSync(file.filepath)) fs.unlinkSync(file.filepath);
                 return res.status(400).json({ message: "jpg, jpeg, png, webp 파일만 허용됩니다." });
             }
+            fs.chmodSync(file.filepath, 0o644);
         }
 
         try {

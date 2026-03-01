@@ -58,6 +58,9 @@ export default async function handler(req, res) {
                 fs.renameSync(file.filepath, path.join(path.dirname(file.filepath), finalName));
             }
 
+            const finalPath = path.join(path.dirname(file.filepath), finalName);
+            if (fs.existsSync(finalPath)) fs.chmodSync(finalPath, 0o644);
+
             const publicPath = `/images/EditorImage/${finalName}`;
             return res.status(200).json({ url: publicPath });
         });

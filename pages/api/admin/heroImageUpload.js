@@ -51,6 +51,7 @@ export default async function handler(req, res) {
         });
 
         fs.renameSync(file.filepath, savePath);
+        fs.chmodSync(savePath, 0o644);
 
         return res.status(200).json({
             message: "업로드 성공",
