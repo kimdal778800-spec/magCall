@@ -18,3 +18,13 @@ yarn-error.log*
 .DS_Store
 *.Zip
 *.zip
+
+# 업로드 이미지 파일 (디렉토리 구조는 유지)
+public/images/ShopImage/*
+public/images/AffiliateImage/*
+public/images/EditorImage/*
+public/images/PartnerImage/*
+!public/images/ShopImage/.gitkeep
+!public/images/AffiliateImage/.gitkeep
+!public/images/EditorImage/.gitkeep
+!public/images/PartnerImage/.gitkeep
