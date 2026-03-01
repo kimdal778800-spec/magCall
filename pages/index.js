@@ -59,8 +59,8 @@ function InfiniteRightSlider({ items, duration = 90 }) {
     return (
         <div className="relative w-full overflow-hidden h-[140px] group">
             {/* 좌/우 페이드 */}
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-pink-50 to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-pink-50 to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-pink-50 dark:from-gray-900 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-pink-50 dark:from-gray-900 to-transparent" />
 
             {/* 트랙 A: 0% → 100% (오른쪽으로 이동) */}
             <motion.div
@@ -140,7 +140,7 @@ export default function Home() {
 
 
     return (
-        <div className="bg-pink-50 min-h-screen text-gray-800 font-sans overflow-hidden">
+        <div className="bg-pink-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 font-sans overflow-hidden">
             {/* 헤더 높이만큼 패딩 적용 */}
             <div className="pt-[72px]">
                 <section className="min-h-[35vh] md:min-h-[30vh] flex flex-col items-center justify-center relative overflow-visible">
@@ -178,15 +178,15 @@ export default function Home() {
                         <p className="text-xs md:text-sm font-semibold tracking-[0.2em] md:tracking-[0.3em] text-pink-400 uppercase mb-2 md:mb-3">
                             MASSAGE CALL
                         </p>
-                        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 text-center leading-tight tracking-tight">
+                        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 dark:text-gray-100 text-center leading-tight tracking-tight">
                             내 주변의{" "}
                             <span className="relative inline-block">
                                 <span className="relative z-10 text-pink-500">빠른 출장</span>
-                                <span className="absolute bottom-1 left-0 w-full h-3 bg-pink-100 rounded-full -z-0"></span>
+                                <span className="absolute bottom-1 left-0 w-full h-3 bg-pink-100 dark:bg-pink-900 rounded-full -z-0"></span>
                             </span>{" "}
                             검색
                         </h1>
-                        <p className="mt-3 text-xs md:text-base text-gray-500 text-center tracking-wide px-2">
+                        <p className="mt-3 text-xs md:text-base text-gray-500 dark:text-gray-400 text-center tracking-wide px-2">
                             지금 바로 가장 가까운 마사지 출장 서비스를 찾아보세요
                         </p>
                     </div>

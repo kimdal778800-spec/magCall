@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const TABS = [
     { code: "all", label: "전체", icon: "🏠" },
@@ -126,6 +127,7 @@ export default function ShopsSection() {
     const { user } = useAuth();
     const isAdmin = user && Number(user.level) === 99;
     const router = useRouter();
+    const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
         const fetchShops = async () => {
@@ -172,7 +174,7 @@ export default function ShopsSection() {
     return (
         <section id="shops">
             {/* 이모지 탭 */}
-            <div className="bg-pink-200 -mt-[70px] pt-5 pb-4 md:mt-0 md:pt-8 md:pb-6 sticky top-[64px] z-30">
+            <div className="bg-pink-200 dark:bg-gray-800 -mt-[70px] pt-5 pb-4 md:mt-0 md:pt-8 md:pb-6 sticky top-[64px] z-30">
                 <div className="flex justify-center gap-3 md:gap-5 px-4 md:px-6 mb-4 md:mb-6">
                     {TABS.map((tab) => (
                         <button
@@ -184,7 +186,7 @@ export default function ShopsSection() {
                             className={`flex flex-col items-center justify-center gap-1 md:gap-2 w-[72px] h-[72px] md:w-24 md:h-24 rounded-xl md:rounded-2xl transition-all duration-200 border-2 ${
                                 activeTab === tab.code
                                     ? "bg-pink-400 border-pink-600 text-white"
-                                    : "bg-pink-50 border-pink-300 text-gray-600 hover:border-pink-500 hover:text-pink-700"
+                                    : "bg-pink-50 dark:bg-gray-700 border-pink-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-pink-500 hover:text-pink-700 dark:hover:border-pink-400 dark:hover:text-pink-300"
                             }`}
                         >
                             <span className="text-2xl md:text-4xl leading-none">{tab.icon}</span>
@@ -195,7 +197,7 @@ export default function ShopsSection() {
 
                 {/* 지역 필터 */}
                 <div className="max-w-5xl mx-auto px-3 md:px-6">
-                    <div className="bg-pink-300 rounded-xl md:rounded-2xl p-3 md:p-4">
+                    <div className="bg-pink-300 dark:bg-gray-700 rounded-xl md:rounded-2xl p-3 md:p-4">
                         <div className="flex flex-wrap gap-1.5 md:gap-2">
                             {REGIONS.map((r) => (
                                 <button
@@ -204,7 +206,7 @@ export default function ShopsSection() {
                                     className={`px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-semibold border transition-all ${
                                         activeRegion === r.code
                                             ? "border-pink-600 text-white bg-pink-500"
-                                            : "border-pink-400 text-pink-900 bg-pink-100 hover:border-pink-600 hover:bg-pink-200"
+                                            : "border-pink-400 dark:border-gray-500 text-pink-900 dark:text-gray-300 bg-pink-100 dark:bg-gray-600 hover:border-pink-600 hover:bg-pink-200 dark:hover:bg-gray-500"
                                     }`}
                                 >
                                     {r.label}
@@ -214,16 +216,16 @@ export default function ShopsSection() {
 
                         {/* 상세 구역 */}
                         {currentRegion && currentRegion.subs.length > 0 && (
-                            <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-pink-400">
+                            <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-pink-400 dark:border-gray-600">
                                 <div className="flex items-center justify-between mb-2 md:mb-3">
-                                    <span className="text-xs text-pink-800 font-semibold flex items-center gap-1">
-                                        <span className="w-2 h-2 rounded-full bg-pink-600 inline-block" />
+                                    <span className="text-xs text-pink-800 dark:text-gray-300 font-semibold flex items-center gap-1">
+                                        <span className="w-2 h-2 rounded-full bg-pink-600 dark:bg-pink-400 inline-block" />
                                         상세 구역 (중복 선택 가능)
                                     </span>
                                     {selectedSubs.length > 0 && (
                                         <button
                                             onClick={() => setSelectedSubs([])}
-                                            className="text-xs text-pink-800 hover:text-white border border-pink-500 hover:bg-pink-500 px-3 py-1 rounded-full transition"
+                                            className="text-xs text-pink-800 dark:text-gray-300 hover:text-white border border-pink-500 dark:border-gray-500 hover:bg-pink-500 dark:hover:bg-gray-600 px-3 py-1 rounded-full transition"
                                         >
                                             × 전체해제
                                         </button>
@@ -237,7 +239,7 @@ export default function ShopsSection() {
                                             className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
                                                 selectedSubs.includes(sub.code)
                                                     ? "border-pink-600 text-white bg-pink-500"
-                                                    : "border-pink-400 text-pink-900 bg-pink-100 hover:border-pink-600 hover:bg-pink-200"
+                                                    : "border-pink-400 dark:border-gray-500 text-pink-900 dark:text-gray-300 bg-pink-100 dark:bg-gray-600 hover:border-pink-600 hover:bg-pink-200 dark:hover:bg-gray-500"
                                             }`}
                                         >
                                             {sub.label}
@@ -251,10 +253,31 @@ export default function ShopsSection() {
             </div>
 
             {/* 카드 영역 */}
-            <div className="bg-gray-50 py-6 md:py-10">
+            <div className="bg-gray-50 dark:bg-gray-900 py-6 md:py-10">
                 <div className="max-w-6xl mx-auto px-3 md:px-6">
                     {isAdmin && (
-                        <div className="flex justify-end mb-6">
+                        <div className="flex justify-end items-center gap-3 mb-6">
+                            <button
+                                onClick={toggleTheme}
+                                className="flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-full font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                title={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
+                            >
+                                {theme === "dark" ? (
+                                    <>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
+                                            <path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z" />
+                                        </svg>
+                                        라이트
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-500">
+                                            <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clipRule="evenodd" />
+                                        </svg>
+                                        다크
+                                    </>
+                                )}
+                            </button>
                             <button
                                 onClick={() => router.push("/admin/ShopsList")}
                                 className="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-full font-bold text-sm transition shadow-sm"
@@ -265,9 +288,9 @@ export default function ShopsSection() {
                     )}
 
                     {filtered.length === 0 ? (
-                        <div className="text-center py-24 text-gray-400">
+                        <div className="text-center py-24 text-gray-400 dark:text-gray-500">
                             <p className="text-5xl mb-5">🏪</p>
-                            <p className="text-lg font-semibold mb-2 text-gray-500">등록된 업체가 없습니다.</p>
+                            <p className="text-lg font-semibold mb-2 text-gray-500 dark:text-gray-400">등록된 업체가 없습니다.</p>
                             {isAdmin && (
                                 <>
                                     <p className="text-sm mb-8">첫 번째 업체로 등록해보세요!</p>
@@ -301,8 +324,8 @@ export default function ShopsSection() {
                                     }`}
                                     onClick={() => router.push(`/shops/${shop.id}`)}
                                 >
-                                <div className="bg-white rounded-[14px] overflow-hidden h-full">
-                                    <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100">
+                                <div className="bg-white dark:bg-gray-800 rounded-[14px] overflow-hidden h-full">
+                                    <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-700">
                                         <img
                                             src={shop.image}
                                             alt={shop.name}
@@ -324,9 +347,9 @@ export default function ShopsSection() {
                                         )}
                                     </div>
                                     <div className="p-3 flex flex-col gap-1.5">
-                                        <h3 className="font-bold text-gray-800 text-sm truncate">{shop.name}</h3>
+                                        <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm truncate">{shop.name}</h3>
                                         {shop.region && (
-                                            <p className="text-xs text-gray-500 truncate flex items-center gap-1">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
                                                 <span>📍</span>
                                                 {getRegionLabel(shop.region, shop.sub_region)}
                                             </p>
@@ -352,7 +375,7 @@ export default function ShopsSection() {
                                         })()}
                                         {/* PC: 전화번호 텍스트 + 텔레그램 버튼 */}
                                         {shop.phone && (
-                                            <p className="hidden md:flex text-sm font-bold text-pink-500 truncate items-center gap-1">
+                                            <p className="hidden md:flex text-sm font-bold text-pink-500 dark:text-pink-400 truncate items-center gap-1">
                                                 <span>📞</span>{formatPhone(shop.phone)}
                                             </p>
                                         )}

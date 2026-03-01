@@ -61,7 +61,7 @@ export default function Header() {
     return (
         <header
             className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-                isScrolled ? "bg-pink-50 shadow-md" : "bg-pink-50"
+                isScrolled ? "bg-pink-50 dark:bg-gray-900 shadow-md dark:shadow-gray-800" : "bg-pink-50 dark:bg-gray-900"
             }`}
         >
             <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
@@ -78,26 +78,26 @@ export default function Header() {
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
                     <Link
                         href="/service"
-                        className="text-gray-700 hover:text-orange-500 transition"
+                        className="text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition"
                     >
                         서비스 소개
                     </Link>
                     <Link
                         href="/partners"
-                        className="text-gray-700 hover:text-orange-500 transition"
+                        className="text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition"
                     >
                         제휴 업소
                     </Link>
 
                     {currentUser ? (
                         <div className="flex items-center gap-3">
-                            <span className="text-gray-700 font-medium">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
                                 👋 {currentUser.name || currentUser.email}{" "}
                                 {level === 99 && "관리자"} 님
                             </span>
                             <button
                                 onClick={handleLogout}
-                                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-100 transition"
+                                className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                             >
                                 로그아웃
                             </button>
@@ -112,7 +112,7 @@ export default function Header() {
                             </Link>
                             <Link
                                 href="/login"
-                                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-100 transition"
+                                className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                             >
                                 로그인
                             </Link>
@@ -124,7 +124,7 @@ export default function Header() {
                 {isMobile && (
                     <button
                         onClick={() => setMenuOpen(true)}
-                        className="md:hidden text-gray-700 hover:text-orange-500 transition text-2xl"
+                        className="md:hidden text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition text-2xl"
                     >
                         ☰
                     </button>

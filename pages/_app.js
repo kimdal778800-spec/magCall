@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModalProvider } from "@/context/ModalContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import Head from "next/head";
 import { useScrollRestoration } from "@/components/hooks/useScrollRestoration";
 
@@ -10,6 +11,7 @@ export default function App({ Component, pageProps }) {
     // ✅ 훅은 컴포넌트 내부에서 직접 호출해야 함
     useScrollRestoration();
     return (
+        <ThemeProvider>
         <AuthProvider>
         <ModalProvider>
             <>
@@ -39,7 +41,7 @@ export default function App({ Component, pageProps }) {
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
 
-                <div className="flex flex-col min-h-[100dvh] bg-gray-50">
+                <div className="flex flex-col min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
                     <Header />
                     <main className="flex-1">
                         <Component {...pageProps} />
@@ -49,5 +51,6 @@ export default function App({ Component, pageProps }) {
             </>
         </ModalProvider>
         </AuthProvider>
+        </ThemeProvider>
     );
 }
