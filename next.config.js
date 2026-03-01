@@ -17,6 +17,11 @@ const nextConfig = {
             },
         },
     },
+    async rewrites() {
+        return [
+            { source: "/images/:path*", destination: "/api/images/:path*" },
+        ];
+    },
     async headers() {
         return [
             {
