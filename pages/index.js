@@ -43,7 +43,7 @@ function LogoItem({ logo }) {
                     alt="logo"
                     initial={{ rotate: 0, y: 0 }}
                     animate={controls}
-                    className="h-[120px] w-[120px] object-cover object-center rounded-xl bg-white transition-all duration-300 hover:scale-110 hover:brightness-110"
+                    className="h-[120px] w-[120px] object-cover object-top rounded-xl bg-white transition-all duration-300 hover:scale-110 hover:brightness-110"
                 />
             </div>
         </MotionLink>
