@@ -38,13 +38,27 @@ export default async function handler(req, res) {
             if (!file) return res.status(400).json({ message: "이미지가 없습니다." });
 
             const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+            const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
             const ext = path.extname(file.originalFilename || "").toLowerCase();
-            if (!allowedExtensions.includes(ext)) {
+            const mime = file.mimetype || "";
+
+            if (!allowedExtensions.includes(ext) && !allowedMimeTypes.includes(mime)) {
                 if (fs.existsSync(file.filepath)) fs.unlinkSync(file.filepath);
                 return res.status(400).json({ message: "jpg, jpeg, png, webp 파일만 허용됩니다." });
             }
 
-            const publicPath = `/images/EditorImage/${path.basename(file.filepath)}`;
+            // 클립보드 붙여넣기 시 확장자가 없으면 MIME 타입으로 보완
+            const mimeToExt = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif" };
+            const finalExt = allowedExtensions.includes(ext) ? ext : (mimeToExt[mime] || ".jpg");
+            const baseName = path.basename(file.filepath);
+            const hasExt = allowedExtensions.includes(path.extname(baseName).toLowerCase());
+            const finalName = hasExt ? baseName : `${baseName}${finalExt}`;
+
+            if (!hasExt) {
+                fs.renameSync(file.filepath, path.join(path.dirname(file.filepath), finalName));
+            }
+
+            const publicPath = `/images/EditorImage/${finalName}`;
             return res.status(200).json({ url: publicPath });
         });
     } catch (err) {
