@@ -215,13 +215,14 @@
 
 body { font-family: 'THEmpgt', sans-serif; }
 
-/* 다크 모드 오버라이드 */
+/* 다크 모드 오버라이드 - 에디터 입력 영역은 항상 흰색 */
 .dark .ql-container {
-    background: #1f2937;
-    color: #f3f4f6;
+    background: #ffffff;
+    color: #111827;
 }
 .dark .ql-editor {
-    color: #f3f4f6;
+    color: #111827;
+    background: #ffffff;
 }
 .dark .shop-content.ql-editor h1,
 .dark .shop-content.ql-editor h2,
