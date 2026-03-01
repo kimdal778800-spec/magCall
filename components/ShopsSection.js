@@ -174,7 +174,7 @@ export default function ShopsSection() {
     return (
         <section id="shops">
             {/* 이모지 탭 */}
-            <div className="bg-pink-200 dark:bg-gray-800 -mt-[70px] pt-5 pb-4 md:mt-0 md:pt-8 md:pb-6 sticky top-[64px] z-30">
+            <div className="bg-pink-200 dark:bg-gray-800 pt-5 pb-4 md:pt-8 md:pb-6 sticky top-[64px] z-30">
                 <div className="flex justify-center gap-3 md:gap-5 px-4 md:px-6 mb-4 md:mb-6">
                     {TABS.map((tab) => (
                         <button
