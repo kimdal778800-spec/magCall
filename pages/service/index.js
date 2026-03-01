@@ -68,12 +68,20 @@ export default function Service() {
                                 <div className="flex items-start justify-between mb-4">
                                     <h2 className="text-lg font-bold text-gray-800">{item.title}</h2>
                                     {isAdmin && (
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="text-xs text-gray-400 hover:text-red-500 transition ml-4 shrink-0"
-                                        >
-                                            삭제
-                                        </button>
+                                        <div className="flex gap-3 ml-4 shrink-0">
+                                            <button
+                                                onClick={() => router.push(`/admin/ServiceEdit/${item.id}`)}
+                                                className="text-xs text-gray-400 hover:text-blue-500 transition"
+                                            >
+                                                수정
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="text-xs text-gray-400 hover:text-red-500 transition"
+                                            >
+                                                삭제
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                                 <div
