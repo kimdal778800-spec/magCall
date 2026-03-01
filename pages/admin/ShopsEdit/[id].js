@@ -140,7 +140,7 @@ export default function ShopsEdit() {
     };
 
     const handlePhoneChange = (e) => {
-        setPhone(e.target.value.replace(/\D/g, "").slice(0, 11));
+        setPhone(e.target.value.replace(/\D/g, "").slice(0, 12));
         clearError("phone");
     };
 
@@ -186,8 +186,8 @@ export default function ShopsEdit() {
             await showFieldError("상세 지역을 선택해주세요.", subRegionRef, "subRegion");
             return;
         }
-        if (phone && !/^01[016789]\d{7,8}$/.test(phone)) {
-            await showFieldError("올바른 전화번호를 입력해주세요.\n(예: 01012345678)", phoneRef, "phone");
+        if (phone && !/^0\d{8,11}$/.test(phone)) {
+            await showFieldError("올바른 전화번호를 입력해주세요.\n(예: 01012345678, 050012345678)", phoneRef, "phone");
             return;
         }
         setSubmitting(true);
@@ -356,6 +356,7 @@ export default function ShopsEdit() {
                                 disabled={!currentRegion || currentRegion.subs.length === 0}
                             >
                                 <option value="">선택</option>
+                                <option value="all">전체지역</option>
                                 {currentRegion?.subs.map((s) => (
                                     <option key={s.code} value={s.code}>{s.label}</option>
                                 ))}
@@ -372,7 +373,7 @@ export default function ShopsEdit() {
                                 type="tel" value={phone} onChange={handlePhoneChange}
                                 className={`w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none transition-all ${errCls("phone") || "border-gray-300"}`}
                                 placeholder="01012345678"
-                                maxLength={11}
+                                maxLength={12}
                             />
                         </div>
                         <div>
