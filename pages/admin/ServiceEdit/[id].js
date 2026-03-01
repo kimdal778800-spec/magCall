@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { useModal } from "@/context/ModalContext";
@@ -19,7 +19,6 @@ const quillToolbar = [
 export default function ServiceEdit() {
     const router = useRouter();
     const { id } = router.query;
-    const quillRef = useRef(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [submitting, setSubmitting] = useState(false);
@@ -41,32 +40,39 @@ export default function ServiceEdit() {
             .finally(() => setLoading(false));
     }, [id]);
 
-    const imageHandler = useCallback(() => {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
-        input.click();
-        input.onchange = async () => {
-            const file = input.files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append("image", file);
-            try {
-                const res = await fetch("/api/admin/uploadEditorImage", { method: "POST", body: formData });
-                const data = await res.json();
-                if (data.url) {
-                    const editor = quillRef.current.getEditor();
-                    const range = editor.getSelection(true);
-                    const insertIndex = range ? range.index : editor.getLength();
-                    editor.insertEmbed(insertIndex, "image", data.url);
-                    editor.setSelection(insertIndex + 1);
-                }
-            } catch (err) {
-                console.error("에디터 이미지 삽입 오류:", err);
-                await showModal("이미지 업로드에 실패했습니다.", "error");
-            }
-        };
-    }, []);
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: quillToolbar,
+            handlers: {
+                image: function () {
+                    const quill = this.quill;
+                    const input = document.createElement("input");
+                    input.setAttribute("type", "file");
+                    input.setAttribute("accept", "image/*");
+                    input.click();
+                    input.onchange = async () => {
+                        const file = input.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append("image", file);
+                        try {
+                            const res = await fetch("/api/admin/uploadEditorImage", { method: "POST", body: formData });
+                            const data = await res.json();
+                            if (data.url) {
+                                const range = quill.getSelection(true);
+                                const insertIndex = range ? range.index : quill.getLength();
+                                quill.insertEmbed(insertIndex, "image", data.url);
+                                quill.setSelection(insertIndex + 1);
+                            }
+                        } catch (err) {
+                            console.error("에디터 이미지 삽입 오류:", err);
+                            showModal("이미지 업로드에 실패했습니다.", "error");
+                        }
+                    };
+                },
+            },
+        },
+    }), [showModal]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -125,16 +131,10 @@ export default function ServiceEdit() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">내용 (이미지 붙여넣기 가능)</label>
                         <div className="border border-gray-300 rounded-xl overflow-hidden">
                             <ReactQuill
-                                ref={quillRef}
                                 theme="snow"
                                 value={content}
                                 onChange={setContent}
-                                modules={{
-                                    toolbar: {
-                                        container: quillToolbar,
-                                        handlers: { image: imageHandler },
-                                    },
-                                }}
+                                modules={modules}
                                 placeholder="내용을 입력하거나 이미지를 붙여넣으세요."
                                 style={{ minHeight: "300px" }}
                             />

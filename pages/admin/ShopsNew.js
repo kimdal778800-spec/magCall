@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { REGIONS } from "@/components/ShopsSection";
@@ -33,8 +33,6 @@ const quillToolbar = [
 export default function ShopsNew() {
     const router = useRouter();
     const { showModal } = useModal();
-    const quillRef = useRef(null);
-
     const [name, setName] = useState("");
     const [category, setCategory] = useState("massage");
     const [themeType, setThemeType] = useState("");
@@ -98,32 +96,39 @@ export default function ShopsNew() {
         setErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
     };
 
-    const imageHandler = useCallback(() => {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
-        input.click();
-        input.onchange = async () => {
-            const file = input.files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append("image", file);
-            try {
-                const res = await fetch("/api/admin/uploadEditorImage", { method: "POST", body: formData });
-                const data = await res.json();
-                if (data.url) {
-                    const editor = quillRef.current.getEditor();
-                    const range = editor.getSelection(true);
-                    const insertIndex = range ? range.index : editor.getLength();
-                    editor.insertEmbed(insertIndex, "image", data.url);
-                    editor.setSelection(insertIndex + 1);
-                }
-            } catch (err) {
-                console.error("에디터 이미지 삽입 오류:", err);
-                await showModal("이미지 업로드에 실패했습니다.", "error");
-            }
-        };
-    }, [showModal]);
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: quillToolbar,
+            handlers: {
+                image: function () {
+                    const quill = this.quill;
+                    const input = document.createElement("input");
+                    input.setAttribute("type", "file");
+                    input.setAttribute("accept", "image/*");
+                    input.click();
+                    input.onchange = async () => {
+                        const file = input.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append("image", file);
+                        try {
+                            const res = await fetch("/api/admin/uploadEditorImage", { method: "POST", body: formData });
+                            const data = await res.json();
+                            if (data.url) {
+                                const range = quill.getSelection(true);
+                                const insertIndex = range ? range.index : quill.getLength();
+                                quill.insertEmbed(insertIndex, "image", data.url);
+                                quill.setSelection(insertIndex + 1);
+                            }
+                        } catch (err) {
+                            console.error("에디터 이미지 삽입 오류:", err);
+                            showModal("이미지 업로드에 실패했습니다.", "error");
+                        }
+                    };
+                },
+            },
+        },
+    }), [showModal]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -359,16 +364,10 @@ export default function ShopsNew() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">본문 내용</label>
                         <div className="border border-gray-300 rounded-xl overflow-hidden">
                             <ReactQuill
-                                ref={quillRef}
                                 theme="snow"
                                 value={description}
                                 onChange={setDescription}
-                                modules={{
-                                    toolbar: {
-                                        container: quillToolbar,
-                                        handlers: { image: imageHandler },
-                                    },
-                                }}
+                                modules={modules}
                                 placeholder="업체 소개, 서비스 내용 등을 입력하세요."
                                 style={{ minHeight: "260px" }}
                             />
