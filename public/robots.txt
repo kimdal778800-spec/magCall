@@ -1,13 +1,9 @@
+# *
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /api/
-Disallow: /login
-Disallow: /signup
-Disallow: /findPassword
 
 # Host
-Host: https://xn--3l2b13oekp.kr
+Host: https://msgcall.kr
 
 # Sitemaps
-Sitemap: https://xn--3l2b13oekp.kr/sitemap.xml
+Sitemap: https://msgcall.kr/sitemap.xml

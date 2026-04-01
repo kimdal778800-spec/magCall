@@ -21,11 +21,11 @@ export default function Document() {
                 <meta property="og:site_name" content="마사지콜" />
                 <meta property="og:title" content="마사지콜 출장안마 출장마사지" />
                 <meta property="og:description" content="전국 출장마사지, 출장안마 전문 플랫폼. 서울·인천·경기 등 지역별 검증된 업체를 빠르게 찾아보세요." />
-                <meta property="og:url" content="https://xn--3l2b13oekp.kr" />
+                <meta property="og:url" content="https://msgcall.kr" />
                 <meta property="og:locale" content="ko_KR" />
 
                 {/* ✅ 카노니컬 */}
-                <link rel="canonical" href="https://xn--3l2b13oekp.kr" />
+                <link rel="canonical" href="https://msgcall.kr" />
             </Head>
             <body>
             <Main />

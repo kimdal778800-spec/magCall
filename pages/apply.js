@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import AlertModal from "@/components/AlertModal";
 
 const ApplyPage = () => {
@@ -50,6 +51,10 @@ const ApplyPage = () => {
 
     return (
         <div className="min-h-[calc(100dvh-56px)] bg-gray-100 flex flex-col items-center justify-between -mt-1">
+            <Head>
+                <title>마사지콜 - 페이백 신청</title>
+                <meta name="description" content="마사지콜 페이백 서비스 신청 페이지. 거래소 UID를 입력하여 페이백 혜택을 받으세요." />
+            </Head>
             <main className="flex-1 w-full flex justify-center">
                 <div className="bg-white w-full max-w-2xl rounded-lg shadow-sm py-16 px-12 mt-8 mb-12">
                     <h1 className="text-2xl font-bold text-center mb-12">신청 페이지</h1>

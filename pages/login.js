@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import Head from "next/head";
 import { useAuth  } from "@/context/AuthContext";
 import AlertModal from "@/components/AlertModal";
 
@@ -41,6 +42,10 @@ export default function Login() {
 
     return (
         <div className="min-h-[calc(100dvh-56px)] bg-gray-100 flex flex-col items-center justify-between -mt-1">
+            <Head>
+                <title>마사지콜 - 로그인</title>
+                <meta name="description" content="마사지콜 로그인 페이지. 계정에 로그인하여 서비스를 이용하세요." />
+            </Head>
             <main className="flex-1 w-full flex justify-center">
                 <div className="bg-white w-full max-w-2xl rounded-lg shadow-sm py-16 px-12 mt-8 mb-12">
                     <h1 className="text-2xl font-bold text-center mb-12">로그인</h1>
