@@ -200,7 +200,7 @@ export default function Home() {
 
                     {/* ✅ 아래쪽 무한 슬라이더 (중앙 정렬 유지) */}
                     <div className="mt-4 md:mt-[10px] w-full relative">
-                        <InfiniteRightSlider items={logos} duration={350} />
+                        <InfiniteRightSlider items={logos} duration={550} />
                     </div>
                 </section>
 
