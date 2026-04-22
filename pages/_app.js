@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import OpiguideBanner from "@/components/OpiguideBanner";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModalProvider } from "@/context/ModalContext";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -46,6 +47,7 @@ export default function App({ Component, pageProps }) {
                     <main className="flex-1">
                         <Component {...pageProps} />
                     </main>
+                    <OpiguideBanner />
                     <Footer />
                 </div>
             </>
