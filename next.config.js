@@ -10,13 +10,6 @@ const nextConfig = {
     swcMinify: true, // 빠른 Rust 기반 빌드 사용
     typescript: { ignoreBuildErrors: true }, // 메모리 절약
     eslint: { ignoreDuringBuilds: true }, // 빌드시 ESLint 생략
-    experimental: {
-        turbo: {
-            loaders: {
-                '.js': ['@swc/jsx', '@swc/jsx-runtime'], // 빠른 빌드용
-            },
-        },
-    },
     async rewrites() {
         return [
             { source: "/images/:path*", destination: "/api/images/:path*" },
