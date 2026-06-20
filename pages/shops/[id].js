@@ -217,45 +217,40 @@ function CommentSection({ shopId }) {
     );
 }
 
-export default function ShopDetail() {
+export async function getServerSideProps({ params }) {
+    const mysql = (await import("mysql2/promise")).default;
+    try {
+        const conn = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            database: process.env.DB_NAME,
+        });
+        const [rows] = await conn.execute(
+            "SELECT id, name, image, category, theme_type, region, sub_region, phone, telegram, description, is_special FROM massage_shops WHERE id = ? AND is_active = 1",
+            [params.id]
+        );
+        await conn.end();
+
+        if (rows.length === 0) return { notFound: true };
+
+        return { props: { shop: JSON.parse(JSON.stringify(rows[0])) } };
+    } catch {
+        return { notFound: true };
+    }
+}
+
+export default function ShopDetail({ shop }) {
     const router = useRouter();
     const { id } = router.query;
-    const [shop, setShop] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-
-    useEffect(() => {
-        if (!id) return;
-        const fetchShop = async () => {
-            try {
-                const res = await fetch(`/api/shops/${id}`);
-                const data = await res.json();
-                if (res.ok) setShop(data.shop);
-                else router.replace("/");
-            } catch {
-                router.replace("/");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchShop();
-    }, [id]);
 
     useEffect(() => {
         const onKey = (e) => { if (e.key === "Escape") setShowModal(false); };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, []);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-pink-50 flex items-center justify-center pt-[64px]">
-                <div className="text-gray-400 text-lg">불러오는 중...</div>
-            </div>
-        );
-    }
-
-    if (!shop) return null;
 
     const regionLabel = getRegionLabel(shop.region);
     const subLabel = shop.sub_region ? getSubLabel(shop.region, shop.sub_region) : "";
