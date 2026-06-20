@@ -29,8 +29,8 @@ echo "[4/5] 빌드..."
 NODE_OPTIONS="--max-old-space-size=1400" npm run build
 
 echo "[5/5] PM2 재시작..."
-pm2 delete $APP_NAME 2>/dev/null || true
-pm2 start npm --name $APP_NAME -- run serve
+pm2 delete all 2>/dev/null || true
+pm2 start npm --name $APP_NAME -- start
 
 pm2 save
 
