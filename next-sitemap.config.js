@@ -14,11 +14,22 @@ module.exports = {
         '/findPassword',
         '/payback-result',
         '/confirmation',
+        '/server-sitemap.xml',
     ],
+    additionalPaths: async () => [],
+    transform: async (config, path) => ({
+        loc: path,
+        changefreq: config.changefreq,
+        priority: config.priority,
+        lastmod: new Date().toISOString(),
+    }),
     robotsTxtOptions: {
         policies: [
             { userAgent: '*', allow: '/' },
             { userAgent: '*', disallow: ['/admin', '/api'] },
+        ],
+        additionalSitemaps: [
+            'https://xn--24-vf0jt1u98lggi.com/server-sitemap.xml',
         ],
     },
 };
