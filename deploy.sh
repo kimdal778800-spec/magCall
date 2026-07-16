@@ -9,7 +9,7 @@ echo "===== 배포 시작 ====="
 cd $APP_DIR
 
 echo "[1/5] 로컬 변경 정리..."
-git restore public/sitemap.xml public/sitemap-0.xml 2>/dev/null || true
+git restore public/sitemap.xml public/sitemap-0.xml public/robots.txt 2>/dev/null || true
 
 echo "[2/5] 최신 코드 pull..."
 git pull --rebase origin main
