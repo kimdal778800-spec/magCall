@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-    siteUrl: 'https://xn--24-vf0jt1u98lggi.com',
+    siteUrl: 'https://msgcall.kr',
     generateRobotsTxt: true,
     sitemapSize: 7000,
     changefreq: 'daily',
@@ -29,7 +29,7 @@ module.exports = {
             { userAgent: '*', disallow: ['/admin', '/api'] },
         ],
         additionalSitemaps: [
-            'https://xn--24-vf0jt1u98lggi.com/server-sitemap.xml',
+            'https://msgcall.kr/server-sitemap.xml',
         ],
     },
 };

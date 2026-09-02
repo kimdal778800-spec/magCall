@@ -259,7 +259,11 @@ export default function ShopDetail({ shop }) {
     return (
         <>
             <Head>
-                <title>{shop.name} | 마사지콜</title>
+                <title key="title">{shop.name} | 마사지콜</title>
+                <meta key="description" name="description" content={`${shop.name} - ${regionLabel}${subLabel ? " " + subLabel : ""} ${categoryLabel} - 마사지콜에서 검증된 업체 정보를 확인하세요.`} />
+                <link key="canonical" rel="canonical" href={`https://msgcall.kr/shops/${shop.id}`} />
+                <meta key="og:title" property="og:title" content={`${shop.name} | 마사지콜`} />
+                <meta key="og:url" property="og:url" content={`https://msgcall.kr/shops/${shop.id}`} />
             </Head>
 
             {showModal && shop.phone && (

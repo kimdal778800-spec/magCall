@@ -1,84 +1,52 @@
 // pages/exchange/[id].js
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import DOMPurify from "dompurify";
 
-export default function ExchangeDetail() {
+export async function getServerSideProps({ params }) {
+    const mysql = (await import("mysql2/promise")).default;
+    const numericId = Number(params.id);
+    if (!numericId) return { notFound: true };
+
+    try {
+        const conn = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            database: process.env.DB_NAME,
+        });
+        const [rows] = await conn.execute(
+            "SELECT * FROM partnerExchanges WHERE id = ?",
+            [numericId]
+        );
+        await conn.end();
+
+        if (rows.length === 0) return { notFound: true };
+
+        return { props: { exchange: JSON.parse(JSON.stringify(rows[0])) } };
+    } catch (err) {
+        console.error("❌ DB 조회 오류:", err);
+        return { notFound: true };
+    }
+}
+
+export default function ExchangeDetail({ exchange }) {
     const router = useRouter();
-    const { id } = router.query;
-
-    const [exchange, setExchange] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [errMsg, setErrMsg] = useState("");
-
-    useEffect(() => {
-        if (!id) return; // 아직 동적 라우트 준비 전이면 대기
-
-        let cancelled = false;
-        const controller = new AbortController();
-
-        (async () => {
-            setLoading(true);
-            setErrMsg("");
-
-            try {
-                const res = await fetch(`/api/exchange/detail?id=${id}`, {
-                    signal: controller.signal,
-                });
-
-                if (!res.ok) {
-                    // 4xx/5xx 처리
-                    const text = await res.text().catch(() => "");
-                    setErrMsg(text || `요청 실패 (status ${res.status})`);
-                    return;
-                }
-
-                const data = await res.json();
-                if (!data?.success || !data?.exchange) {
-                    setErrMsg(data?.message || "데이터를 불러오지 못했습니다.");
-                    return;
-                }
-
-                if (!cancelled) setExchange(data.exchange);
-            } catch (e) {
-                if (!cancelled) setErrMsg("네트워크/서버 오류가 발생했습니다.");
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-            controller.abort();
-        };
-    }, [id]);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen text-gray-500">
-                불러오는 중입니다...
-            </div>
-        );
-    }
-
-    if (errMsg) {
-        return (
-            <div className="max-w-3xl mx-auto px-6 py-16 text-center text-red-600">
-                {errMsg}
-            </div>
-        );
-    }
-
-    if (!exchange) {
-        return (
-            <div className="max-w-3xl mx-auto px-6 py-16 text-center text-gray-500">
-                거래소 정보를 찾을 수 없습니다.
-            </div>
-        );
-    }
+    const canonicalUrl = `https://msgcall.kr/exchange/${exchange.id}`;
+    const description = `${exchange.name} 페이백 ${exchange.rate ?? ""}% 할인 ${exchange.discount ?? ""}% - 마사지콜 제휴 거래소 안내`;
 
     return (
         <div className="max-w-5xl mx-auto px-6 py-12 pt-[100px]">
+            <Head>
+                <title key="title">{exchange.name} 페이백 안내 | 마사지콜</title>
+                <meta key="description" name="description" content={description} />
+                <link key="canonical" rel="canonical" href={canonicalUrl} />
+                <meta key="og:title" property="og:title" content={`${exchange.name} 페이백 안내 | 마사지콜`} />
+                <meta key="og:description" property="og:description" content={description} />
+                <meta key="og:url" property="og:url" content={canonicalUrl} />
+            </Head>
+
             {/* 상단 제목만 남기기 */}
             <div className="flex justify-center items-center mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">
@@ -148,18 +116,7 @@ export default function ExchangeDetail() {
             <div className="flex justify-end">
                 <button
                     onClick={() => {
-                        const savedY = sessionStorage.getItem("scrollPosition");
                         router.push("/"); // ✅ 목록 페이지로 이동
-
-                        // ✅ 페이지 이동 완료 후 부드럽게 스크롤 복원
-                        if (savedY) {
-                            setTimeout(() => {
-                                window.scrollTo({
-                                    top: parseFloat(savedY),
-                                    behavior: "smooth", // ✅ 부드러운 이동
-                                });
-                            }, 300); // 라우팅 완료 후 살짝 딜레이
-                        }
                     }}
                     className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-md shadow-sm font-medium"
                 >
@@ -167,6 +124,5 @@ export default function ExchangeDetail() {
                 </button>
             </div>
         </div>
-
     );
 }

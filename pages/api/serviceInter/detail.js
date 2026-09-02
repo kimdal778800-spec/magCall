@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
         // ✅ DB 조회
         const [rows] = await conn.execute(
-            "SELECT * FROM serviceInter WHERE id =  (select max(id) from serviceInter)",
+            "SELECT * FROM serviceInter WHERE id = ?",
             [numericId]
         );
 

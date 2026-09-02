@@ -2,8 +2,14 @@
 User-agent: *
 Allow: /
 
+# *
+User-agent: *
+Disallow: /admin
+Disallow: /api
+
 # Host
 Host: https://msgcall.kr
 
 # Sitemaps
 Sitemap: https://msgcall.kr/sitemap.xml
+Sitemap: https://msgcall.kr/server-sitemap.xml

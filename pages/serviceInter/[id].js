@@ -1,84 +1,54 @@
 // pages/serviceInter/[id].js
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import DOMPurify from "dompurify";
 
-export default function ExchangeDetail() {
+export async function getServerSideProps({ params }) {
+    const mysql = (await import("mysql2/promise")).default;
+    const numericId = Number(params.id);
+    if (!numericId) return { notFound: true };
+
+    try {
+        const conn = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            database: process.env.DB_NAME,
+        });
+        const [rows] = await conn.execute(
+            "SELECT * FROM serviceInter WHERE id = ?",
+            [numericId]
+        );
+        await conn.end();
+
+        if (rows.length === 0) return { notFound: true };
+
+        return { props: { serviceInter: JSON.parse(JSON.stringify(rows[0])) } };
+    } catch (err) {
+        console.error("❌ DB 조회 오류:", err);
+        return { notFound: true };
+    }
+}
+
+export default function ServiceInterDetail({ serviceInter }) {
     const router = useRouter();
-    const { id } = router.query;
-
-    const [serviceInter, setServiceInter] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [errMsg, setErrMsg] = useState("");
-
-    useEffect(() => {
-        if (!id) return; // 아직 동적 라우트 준비 전이면 대기
-
-        let cancelled = false;
-        const controller = new AbortController();
-
-        (async () => {
-            setLoading(true);
-            setErrMsg("");
-
-            try {
-                const res = await fetch(`/api/serviceInter/detail?id=${id}`, {
-                    signal: controller.signal,
-                });
-
-                if (!res.ok) {
-                    // 4xx/5xx 처리
-                    const text = await res.text().catch(() => "");
-                    setErrMsg(text || `요청 실패 (status ${res.status})`);
-                    return;
-                }
-
-                const data = await res.json();
-                if (!data?.success || !data?.serviceInter) {
-                    setErrMsg(data?.message || "데이터를 불러오지 못했습니다.");
-                    return;
-                }
-
-                if (!cancelled) setServiceInter(data.serviceInter);
-            } catch (e) {
-                if (!cancelled) setErrMsg("네트워크/서버 오류가 발생했습니다.");
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-            controller.abort();
-        };
-    }, [id]);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen text-gray-500">
-                불러오는 중입니다...
-            </div>
-        );
-    }
-
-    if (errMsg) {
-        return (
-            <div className="max-w-3xl mx-auto px-6 py-16 text-center text-red-600">
-                {errMsg}
-            </div>
-        );
-    }
-
-    if (!serviceInter) {
-        return (
-            <div className="max-w-3xl mx-auto px-6 py-16 text-center text-gray-500">
-                서비스 소개 정보를 찾을 수 없습니다.
-            </div>
-        );
-    }
+    const canonicalUrl = `https://msgcall.kr/serviceInter/${serviceInter.id}`;
+    const plainDescription = (serviceInter.description || "")
+        .replace(/<[^>]*>/g, "")
+        .slice(0, 150) || `${serviceInter.name} - 마사지콜 서비스 소개`;
 
     return (
         <div className="max-w-5xl mx-auto px-6 py-12 pt-[100px]">
+            <Head>
+                <title key="title">{serviceInter.name} | 마사지콜</title>
+                <meta key="description" name="description" content={plainDescription} />
+                <link key="canonical" rel="canonical" href={canonicalUrl} />
+                <meta key="og:title" property="og:title" content={`${serviceInter.name} | 마사지콜`} />
+                <meta key="og:description" property="og:description" content={plainDescription} />
+                <meta key="og:url" property="og:url" content={canonicalUrl} />
+            </Head>
+
             {/* 상단 제목만 남기기 */}
             <div className="flex justify-center items-center mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">
@@ -88,7 +58,6 @@ export default function ExchangeDetail() {
 
             {/* 서비스 소개 설명 */}
             <div className="mb-12">
-                {/*<h2 className="text-lg font-semibold text-gray-800 mb-3">서비스 소개</h2>*/}
                 <div
                     className="prose max-w-none ql-editor"
                     dangerouslySetInnerHTML={{ __html: typeof window !== "undefined" ? DOMPurify.sanitize(serviceInter.description) : serviceInter.description }}
@@ -107,6 +76,5 @@ export default function ExchangeDetail() {
                 </button>
             </div>
         </div>
-
     );
 }

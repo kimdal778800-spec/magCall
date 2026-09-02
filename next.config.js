@@ -15,6 +15,24 @@ const nextConfig = {
             { source: "/images/:path*", destination: "/api/images/:path*" },
         ];
     },
+    async redirects() {
+        return [
+            // ✅ 예전 퓨니코드 도메인/이전 도메인으로 들어온 요청을 msgcall.kr로 301 리다이렉트
+            //    (동일 서버에 두 도메인이 함께 연결되어 있으면 Google이 두 도메인을 중복 콘텐츠로 인식하는 문제 방지)
+            {
+                source: "/:path*",
+                has: [{ type: "host", value: "xn--24-vf0jt1u98lggi.com" }],
+                destination: "https://msgcall.kr/:path*",
+                permanent: true,
+            },
+            {
+                source: "/:path*",
+                has: [{ type: "host", value: "www.msgcall.kr" }],
+                destination: "https://msgcall.kr/:path*",
+                permanent: true,
+            },
+        ];
+    },
     async headers() {
         return [
             {

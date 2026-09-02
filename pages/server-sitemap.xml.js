@@ -1,4 +1,4 @@
-import { getServerSideSitemap } from 'next-sitemap';
+import { getServerSideSitemapLegacy } from 'next-sitemap';
 import mysql from 'mysql2/promise';
 
 export async function getServerSideProps(ctx) {
@@ -10,19 +10,35 @@ export async function getServerSideProps(ctx) {
         database: process.env.DB_NAME,
     });
 
-    const [rows] = await conn.execute(
+    const [shopRows] = await conn.execute(
         'SELECT id FROM massage_shops WHERE is_active = 1 ORDER BY id DESC'
     );
+    const [exchangeRows] = await conn.execute('SELECT id FROM partnerExchanges ORDER BY id DESC');
+    const [serviceInterRows] = await conn.execute('SELECT id FROM serviceInter ORDER BY id DESC');
     await conn.end();
 
-    const fields = rows.map((shop) => ({
-        loc: `https://xn--24-vf0jt1u98lggi.com/shops/${shop.id}`,
-        lastmod: new Date().toISOString(),
-        changefreq: 'daily',
-        priority: 0.8,
-    }));
+    const fields = [
+        ...shopRows.map((shop) => ({
+            loc: `https://msgcall.kr/shops/${shop.id}`,
+            lastmod: new Date().toISOString(),
+            changefreq: 'daily',
+            priority: 0.8,
+        })),
+        ...exchangeRows.map((exchange) => ({
+            loc: `https://msgcall.kr/exchange/${exchange.id}`,
+            lastmod: new Date().toISOString(),
+            changefreq: 'weekly',
+            priority: 0.6,
+        })),
+        ...serviceInterRows.map((serviceInter) => ({
+            loc: `https://msgcall.kr/serviceInter/${serviceInter.id}`,
+            lastmod: new Date().toISOString(),
+            changefreq: 'weekly',
+            priority: 0.6,
+        })),
+    ];
 
-    return getServerSideSitemap(ctx, fields);
+    return getServerSideSitemapLegacy(ctx, fields);
 }
 
 export default function SitemapIndex() {}
