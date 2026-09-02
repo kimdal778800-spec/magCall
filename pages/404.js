@@ -7,8 +7,8 @@ export default function NotFound() {
     return (
         <>
             <Head>
-                <title>페이지를 찾을 수 없습니다 | 마사지콜</title>
-                <meta name="robots" content="noindex, nofollow" />
+                <title key="title">페이지를 찾을 수 없습니다 | 마사지콜</title>
+                <meta key="robots" name="robots" content="noindex, nofollow" />
             </Head>
             <div className="min-h-screen bg-pink-50 flex items-center justify-center px-4">
                 <div className="text-center">
